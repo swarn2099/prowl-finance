@@ -6,16 +6,28 @@ import {
   Mutation,
   Args,
   ResolveReference,
+  Context,
 } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from '@prowl/api-interfaces';
+import { GetToken } from '@prowl/common';
 
 @Resolver((of) => User)
 export class UserResolver {
   constructor(private userService: UserService) {}
 
   @Query((returns) => User)
-  async getUserById(@Args('uuid') uuid: string): Promise<User> {
+  async getUserById(
+    @Context('sub') context,
+    @GetToken('sub') token,
+
+    @Args('uuid') uuid: string
+  ): Promise<User> {
+    console.log('Token: ', token);
+    // console.log(
+    //   'Headers from user-service:',
+    //   JSON.parse(context.req.headers.user).sub
+    // );
     return this.userService.findById(uuid);
   }
 

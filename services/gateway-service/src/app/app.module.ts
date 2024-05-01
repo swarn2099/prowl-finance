@@ -1,7 +1,8 @@
-import { IntrospectAndCompose } from '@apollo/gateway';
+import { IntrospectAndCompose, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { authContext } from './auth/auth.context';
 
 @Module({
   imports: [
@@ -9,6 +10,7 @@ import { GraphQLModule } from '@nestjs/graphql';
       driver: ApolloGatewayDriver,
       server: {
         // Apollo server options
+        context: authContext,
         introspection: true, // Enables GraphQL Playground in production, disable if not needed
         playground: true, // Enables GraphQL Playground in production, disable if not needed
       },
@@ -19,6 +21,20 @@ import { GraphQLModule } from '@nestjs/graphql';
             { name: 'transactions', url: 'http://localhost:8001/graphql' },
           ],
         }),
+        buildService({ url }) {
+          return new RemoteGraphQLDataSource({
+            url,
+            willSendRequest({ request, context }) {
+              console.log('context:', context.user);
+              if (context.user) {
+                request.http.headers.set(
+                  'user',
+                  `${JSON.stringify(context.user)}`
+                );
+              }
+            },
+          });
+        },
       },
     }),
   ],

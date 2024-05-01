@@ -3,24 +3,18 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
-import { AllExceptionsFilter } from './all-exception.filter';
+// import { AllExceptionsFilter } from './all-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  app.enableCors({
-    origin: 'https://studio.apollographql.com',
-    methods: 'POST',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Authorization',
-  });
 
-  app.useGlobalFilters(new AllExceptionsFilter());
+  const globalPrefix = 'graphql';
+  app.setGlobalPrefix(globalPrefix);
+
   const port = process.env.PORT || 8888;
   await app.listen(port);
   Logger.log(
