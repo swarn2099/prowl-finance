@@ -1,5 +1,10 @@
 // transaction-service/src/graphql/user.transactions.resolver.ts
-import { Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  ResolveField,
+  Parent,
+  ResolveReference,
+} from '@nestjs/graphql';
 import { User as UserExtension } from '../user.extension';
 import { Transaction } from '@prowl/api-interfaces';
 import { UserTransactionService } from '../services/user-transaction.service';
@@ -8,8 +13,13 @@ import { UserTransactionService } from '../services/user-transaction.service';
 export class UserTranscationsResolver {
   constructor(private transactionService: UserTransactionService) {}
 
-  @ResolveField(() => [Transaction])
+  // @ResolveField((of) => UserExtension)
+  // user(@Parent() transaction: Transaction): any {
+  //   return { __typename: 'User', id: transaction.userUuid };
+  // }
+
+  @ResolveField('transactions', () => [Transaction])
   transactions(@Parent() user: UserExtension): Promise<Transaction[]> {
-    return this.transactionService.getTransactionsByUserId(user.id);
+    return this.transactionService.getTransactionsByUserId(user.uuid);
   }
 }

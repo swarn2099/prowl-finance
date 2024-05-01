@@ -2,11 +2,11 @@
 import { ObjectType, Field, ID, Directive } from '@nestjs/graphql';
 
 @ObjectType()
-@Directive('@key(fields: "id")')
+@Directive('@key(fields: "uuid")')
 @Directive('@shareable')
 export class User {
   @Field(() => ID)
-  id!: string;
+  uuid!: string;
 
   @Field()
   email!: string;

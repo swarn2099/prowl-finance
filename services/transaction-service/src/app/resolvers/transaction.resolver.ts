@@ -55,16 +55,21 @@ export class TransactionResolver {
     return this.transactionService.remove(id);
   }
 
-  @ResolveField((of) => UserExtension)
-  user(@Parent() transaction: Transaction): any {
-    return { __typename: 'User', id: transaction.userId };
-  }
+  // @ResolveField((of) => UserExtension)
+  // user(@Parent() transaction: Transaction): any {
+  //   return { __typename: 'User', id: transaction.userUuid };
+  // }
 
-  @ResolveReference()
-  resolveReference(ref: {
-    __typename: string;
-    id: string;
-  }): Promise<Transaction> {
-    return this.transactionService.findById(ref.id);
-  }
+  // @ResolveField((of) => UserExtension)
+  // userUuid(@Parent() transaction: Transaction): any {
+  //   return { __typename: 'Transaction', id: transaction.userUuid };
+  // }
+
+  // @ResolveReference()
+  // resolveReference(ref: {
+  //   __typename: string;
+  //   id: string;
+  // }): Promise<Transaction> {
+  //   return this.transactionService.findById(ref.id);
+  // }
 }

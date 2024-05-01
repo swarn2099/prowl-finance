@@ -17,5 +17,5 @@ export class Transaction {
   description!: string;
 
   @Field()
-  userId!: string;
+  userUuid!: string;
 }

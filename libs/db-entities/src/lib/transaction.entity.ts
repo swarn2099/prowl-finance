@@ -8,7 +8,7 @@ import {
 
 @Entity()
 export class Transaction {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id!: string;
 
   @Column()
@@ -21,5 +21,5 @@ export class Transaction {
   date!: Date;
 
   @Column()
-  userId!: string; // Assuming transactions are linked to a user by userId
+  userUuid!: string; // Assuming transactions are linked to a user by userId
 }

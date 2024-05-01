@@ -3,18 +3,18 @@
 # ------------------------------------------------------
 
 type User {
-  id: ID!
+  uuid: ID!
   email: String!
   name: String!
 }
 
 type Query {
-  getUserById(id: String!): User!
+  getUserById(uuid: String!): User!
   getAllUsers: [User!]!
 }
 
 type Mutation {
   createUser(email: String!, name: String!): User!
-  updateUser(id: String!, email: String!, name: String!): User!
-  deleteUser(id: String!): User!
+  updateUser(uuid: String!, email: String!, name: String!): User!
+  deleteUser(uuid: String!): User!
 }

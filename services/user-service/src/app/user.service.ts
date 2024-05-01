@@ -15,8 +15,8 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findById(id: string): Promise<User | undefined> {
-    return await this.userRepository.findOneBy({ id });
+  async findById(uuid: string): Promise<User | undefined> {
+    return await this.userRepository.findOneBy({ uuid });
   }
 
   async create(email: string, name: string): Promise<User> {
@@ -25,8 +25,8 @@ export class UserService {
     return newUser;
   }
 
-  async update(id: string, attrs: Partial<User>): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+  async update(uuid: string, attrs: Partial<User>): Promise<User> {
+    const user = await this.userRepository.findOneBy({ uuid });
     if (!user) {
       throw new Error('User not found');
     }
@@ -35,8 +35,8 @@ export class UserService {
     return user;
   }
 
-  async remove(id: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+  async remove(uuid: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ uuid });
     if (!user) {
       throw new Error('User not found');
     }

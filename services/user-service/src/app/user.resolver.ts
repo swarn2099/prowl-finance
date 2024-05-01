@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // services/user-service/src/app/user/user.resolver.ts
 import {
   Resolver,
@@ -14,8 +15,8 @@ export class UserResolver {
   constructor(private userService: UserService) {}
 
   @Query((returns) => User)
-  async getUserById(@Args('id') id: string): Promise<User> {
-    return this.userService.findById(id);
+  async getUserById(@Args('uuid') uuid: string): Promise<User> {
+    return this.userService.findById(uuid);
   }
 
   @Query((returns) => [User])
@@ -33,16 +34,16 @@ export class UserResolver {
 
   @Mutation((returns) => User)
   async updateUser(
-    @Args('id') id: string,
+    @Args('uuid') uuid: string,
     @Args('email') email: string,
     @Args('name') name: string
   ): Promise<User> {
-    return this.userService.update(id, { email, name });
+    return this.userService.update(uuid, { email, name });
   }
 
   @Mutation((returns) => User)
-  async deleteUser(@Args('id') id: string): Promise<User> {
-    return this.userService.remove(id);
+  async deleteUser(@Args('uuid') uuid: string): Promise<User> {
+    return this.userService.remove(uuid);
   }
 
   // @ResolveReference()

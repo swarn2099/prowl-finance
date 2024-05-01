@@ -10,6 +10,7 @@ import { Transaction } from '@prowl/db-entities';
 import { join } from 'path';
 import { TransactionResolver, UserTranscationsResolver } from './resolvers';
 import { TransactionService, UserTransactionService } from './services';
+import { User } from './user.extension';
 
 @Module({
   imports: [
@@ -37,15 +38,18 @@ import { TransactionService, UserTransactionService } from './services';
         federation: 2,
         path: join(process.cwd(), 'gql/transaction-service-schema.gql'),
       },
+      buildSchemaOptions: {
+        orphanedTypes: [User],
+      },
       context: ({ req, res }) => ({ req, res }),
     }),
   ],
   controllers: [],
   providers: [
-    TransactionResolver,
-    TransactionService,
     UserTranscationsResolver,
     UserTransactionService,
+    TransactionResolver,
+    TransactionService,
   ],
 })
 export class AppModule {}

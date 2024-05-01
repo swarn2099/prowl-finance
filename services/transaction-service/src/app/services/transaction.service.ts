@@ -22,12 +22,12 @@ export class TransactionService {
   async create(
     amount: number,
     description: string,
-    userId: string
+    userUuid: string
   ): Promise<Transaction> {
     const newTransaction = this.transactionRepository.create({
       amount,
       description,
-      userId,
+      userUuid,
     });
     await this.transactionRepository.save(newTransaction);
     return newTransaction;
@@ -52,7 +52,7 @@ export class TransactionService {
     return transaction;
   }
 
-  async getTransactionsByUserId(userId: string): Promise<Transaction[]> {
-    return await this.transactionRepository.find({ where: { userId } });
+  async getTransactionsByUserId(userUuid: string): Promise<Transaction[]> {
+    return await this.transactionRepository.find({ where: { userUuid } });
   }
 }
