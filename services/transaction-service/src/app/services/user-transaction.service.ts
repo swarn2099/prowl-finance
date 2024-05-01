@@ -12,6 +12,13 @@ export class UserTransactionService {
   ) {}
 
   async getTransactionsByUserId(userId: string): Promise<Transaction[]> {
+    console.log(
+      '------------- UserTransactionService.getTransactionsByUserId -------------'
+    );
+    console.log('UserTransactionService.getTransactionsByUserId', userId);
     return await this.transactionRepository.find({ where: { userId } });
+  }
+  async findById(id: string): Promise<Transaction | undefined> {
+    return await this.transactionRepository.findOneBy({ id });
   }
 }

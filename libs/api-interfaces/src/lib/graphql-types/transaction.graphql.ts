@@ -2,25 +2,20 @@
 import { ObjectType, Field, ID, Directive } from '@nestjs/graphql';
 
 @ObjectType()
-@Directive('@key(fields: "id")') // Primary key for federation
+@Directive('@key(fields: "id")')
 export class Transaction {
   @Field(() => ID)
-  @Directive('@shareable')
   id!: string;
 
   @Field()
-  @Directive('@shareable')
   amount!: number;
 
   @Field()
-  @Directive('@shareable')
   date!: Date;
 
   @Field()
-  @Directive('@shareable')
   description!: string;
 
-  @Field(() => ID)
-  @Directive('@shareable')
+  @Field()
   userId!: string;
 }

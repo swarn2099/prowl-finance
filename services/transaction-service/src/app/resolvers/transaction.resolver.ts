@@ -4,12 +4,13 @@ import {
   Query,
   Mutation,
   Args,
-  ResolveField,
   ResolveReference,
-  ID,
+  ResolveField,
+  Parent,
 } from '@nestjs/graphql';
 import { TransactionService } from '../services/transaction.service';
 import { Transaction } from '@prowl/api-interfaces';
+import { User as UserExtension } from '../user.extension';
 
 @Resolver((of) => Transaction)
 export class TransactionResolver {
@@ -31,7 +32,13 @@ export class TransactionResolver {
     @Args('description') description: string,
     @Args('userId') userId: string
   ): Promise<Transaction> {
-    return this.transactionService.create(amount, description, userId);
+    console.log('userId', userId, 'amount', amount, 'description', description);
+
+    try {
+      return this.transactionService.create(amount, description, userId);
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   @Mutation((returns) => Transaction)
@@ -48,12 +55,9 @@ export class TransactionResolver {
     return this.transactionService.remove(id);
   }
 
-  @Query((returns) => [Transaction])
-  @ResolveField('transactions', (returns) => [Transaction])
-  async getTransactionsByUserId(
-    @Args('userId', { type: () => ID }) userId: string
-  ): Promise<Transaction[]> {
-    return this.transactionService.getTransactionsByUserId(userId);
+  @ResolveField((of) => UserExtension)
+  user(@Parent() transaction: Transaction): any {
+    return { __typename: 'User', id: transaction.userId };
   }
 
   @ResolveReference()

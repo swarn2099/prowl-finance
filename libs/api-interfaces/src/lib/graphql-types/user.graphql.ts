@@ -2,7 +2,8 @@
 import { ObjectType, Field, ID, Directive } from '@nestjs/graphql';
 
 @ObjectType()
-@Directive('@key(fields: "id")') // Key for federation but no @extends as it is the base definition
+@Directive('@key(fields: "id")')
+@Directive('@shareable')
 export class User {
   @Field(() => ID)
   id!: string;

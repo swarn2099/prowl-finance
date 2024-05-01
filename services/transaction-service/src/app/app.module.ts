@@ -8,7 +8,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Transaction } from '@prowl/db-entities';
 import { join } from 'path';
-import { TransactionResolver, UserTransactionsResolver } from './resolvers';
+import { TransactionResolver, UserTranscationsResolver } from './resolvers';
 import { TransactionService, UserTransactionService } from './services';
 
 @Module({
@@ -42,10 +42,10 @@ import { TransactionService, UserTransactionService } from './services';
   ],
   controllers: [],
   providers: [
-    UserTransactionsResolver,
-    UserTransactionService,
     TransactionResolver,
     TransactionService,
+    UserTranscationsResolver,
+    UserTransactionService,
   ],
 })
 export class AppModule {}

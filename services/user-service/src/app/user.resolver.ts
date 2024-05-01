@@ -1,5 +1,11 @@
 // services/user-service/src/app/user/user.resolver.ts
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveReference,
+} from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from '@prowl/api-interfaces';
 
@@ -38,4 +44,12 @@ export class UserResolver {
   async deleteUser(@Args('id') id: string): Promise<User> {
     return this.userService.remove(id);
   }
+
+  // @ResolveReference()
+  // resolveReference(reference: {
+  //   __typename: string;
+  //   id: string;
+  // }): Promise<User> {
+  //   return this.userService.findById(reference.id);
+  // }
 }
