@@ -1,0 +1,24 @@
+{
+  "name": "services-transaction-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "services/transaction-service/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "services-transaction-service:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "services-transaction-service:build:development"
+        },
+        "production": {
+          "buildTarget": "services-transaction-service:build:production"
+        }
+      }
+    }
+  }
+}
