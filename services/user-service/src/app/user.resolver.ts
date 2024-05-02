@@ -10,7 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from '@prowl/api-interfaces';
-import { GetToken } from '@prowl/common';
+import { GetToken, encrypt } from '@prowl/common';
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -18,17 +18,11 @@ export class UserResolver {
 
   @Query((returns) => User)
   async getUserById(
-    @Context('sub') context,
-    @GetToken('sub') token,
-
-    @Args('uuid') uuid: string
+    @GetToken('auth0ID') auth0ID,
+    @Context() context
   ): Promise<User> {
-    console.log('Token: ', token);
-    // console.log(
-    //   'Headers from user-service:',
-    //   JSON.parse(context.req.headers.user).sub
-    // );
-    return this.userService.findById(uuid);
+    const response: any = await this.userService.findById(auth0ID);
+    return response;
   }
 
   @Query((returns) => [User])
@@ -37,11 +31,9 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  async createUser(
-    @Args('email') email: string,
-    @Args('name') name: string
-  ): Promise<User> {
-    return this.userService.create(email, name);
+  async createUser(@GetToken() token): Promise<User> {
+    const { email, name, auth0ID } = token;
+    return this.userService.create(auth0ID, email, name);
   }
 
   @Mutation((returns) => User)
@@ -57,12 +49,4 @@ export class UserResolver {
   async deleteUser(@Args('uuid') uuid: string): Promise<User> {
     return this.userService.remove(uuid);
   }
-
-  // @ResolveReference()
-  // resolveReference(reference: {
-  //   __typename: string;
-  //   id: string;
-  // }): Promise<User> {
-  //   return this.userService.findById(reference.id);
-  // }
 }

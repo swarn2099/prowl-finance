@@ -4,17 +4,18 @@
 
 type User {
   uuid: ID!
+  auth0ID: String!
   email: String!
   name: String!
 }
 
 type Query {
-  getUserById(uuid: String!): User!
+  getUserById: User!
   getAllUsers: [User!]!
 }
 
 type Mutation {
-  createUser(email: String!, name: String!): User!
+  createUser: User!
   updateUser(uuid: String!, email: String!, name: String!): User!
   deleteUser(uuid: String!): User!
 }

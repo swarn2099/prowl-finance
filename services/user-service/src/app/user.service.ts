@@ -11,18 +11,33 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
+  maskUUID = (user: User) => {
+    return {
+      ...user,
+      uuid: 'this field will not be visible to the client',
+    };
+  };
+
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    const response = await this.userRepository.find();
+    return response.map(this.maskUUID);
   }
 
-  async findById(uuid: string): Promise<User | undefined> {
-    return await this.userRepository.findOneBy({ uuid });
+  async findById(auth0ID: string): Promise<User | undefined> {
+    const response = await this.userRepository.findOneBy({ auth0ID });
+    return response ? response : undefined;
   }
 
-  async create(email: string, name: string): Promise<User> {
-    const newUser = this.userRepository.create({ email, name });
+  async create(auth0ID: string, email: string, name: string): Promise<User> {
+    // first check if user exists, if so return user with message saying user already exists
+    const user = await this.userRepository.findOneBy({ auth0ID });
+    if (user) {
+      return this.maskUUID(user);
+    }
+
+    const newUser = this.userRepository.create({ auth0ID, email, name });
     await this.userRepository.save(newUser);
-    return newUser;
+    return this.maskUUID(newUser);
   }
 
   async update(uuid: string, attrs: Partial<User>): Promise<User> {
@@ -32,7 +47,7 @@ export class UserService {
     }
     Object.assign(user, attrs);
     await this.userRepository.save(user);
-    return user;
+    return this.maskUUID(user);
   }
 
   async remove(uuid: string): Promise<User> {
@@ -41,6 +56,6 @@ export class UserService {
       throw new Error('User not found');
     }
     await this.userRepository.remove(user);
-    return user;
+    return this.maskUUID(user);
   }
 }

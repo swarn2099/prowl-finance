@@ -27,10 +27,8 @@ import { authContext } from './auth/auth.context';
             willSendRequest({ request, context }) {
               console.log('context:', context.user);
               if (context.user) {
-                request.http.headers.set(
-                  'user',
-                  `${JSON.stringify(context.user)}`
-                );
+                const user = { ...context.user, auth0ID: context.user.sub };
+                request.http.headers.set('user', `${JSON.stringify(user)}`);
               }
             },
           });

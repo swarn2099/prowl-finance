@@ -12,6 +12,7 @@ export class UserTransactionService {
   ) {}
 
   async getTransactionsByUserId(userUuid: string): Promise<Transaction[]> {
+    console.log('in the service: ', userUuid);
     return await this.transactionRepository.find({ where: { userUuid } });
   }
   async findById(id: string): Promise<Transaction | undefined> {

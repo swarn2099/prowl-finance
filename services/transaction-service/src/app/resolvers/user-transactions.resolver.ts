@@ -8,6 +8,7 @@ import {
 import { User as UserExtension } from '../user.extension';
 import { Transaction } from '@prowl/api-interfaces';
 import { UserTransactionService } from '../services/user-transaction.service';
+import { decrypt, key } from '@prowl/common';
 
 @Resolver((of) => UserExtension)
 export class UserTranscationsResolver {
@@ -19,7 +20,10 @@ export class UserTranscationsResolver {
   // }
 
   @ResolveField('transactions', () => [Transaction])
-  transactions(@Parent() user: UserExtension): Promise<Transaction[]> {
-    return this.transactionService.getTransactionsByUserId(user.uuid);
+  async transactions(@Parent() user: UserExtension): Promise<Transaction[]> {
+    const response = await this.transactionService.getTransactionsByUserId(
+      user.uuid
+    );
+    return response.map((item) => ({ ...item, userUuid: 'this is masked :)' }));
   }
 }

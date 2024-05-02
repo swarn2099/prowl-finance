@@ -9,6 +9,9 @@ export class User {
   uuid!: string;
 
   @Field()
+  auth0ID!: string;
+
+  @Field()
   email!: string;
 
   @Field()

@@ -7,10 +7,11 @@ export class User {
   uuid!: string;
 
   @Column()
+  auth0ID!: string;
+
+  @Column()
   email!: string;
 
   @Column()
   name!: string;
-
-  // Add other necessary columns
 }
