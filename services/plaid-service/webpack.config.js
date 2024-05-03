@@ -4,9 +4,8 @@ const path = require('path');
 
 module.exports = {
   context: path.resolve(__dirname, '../../'),  // Adjust the path as necessary
-
   output: {
-    path: join(__dirname, '../../dist/services/user-service'),
+    path: join(__dirname, '../../dist/services/plaid-service'),
   },
   resolve: {
     symlinks: false,
@@ -22,8 +21,7 @@ module.exports = {
       assets: ['./src/assets', {
         input: path.resolve(__dirname, '../../libs/protos/src/lib'),
         glob: '**/*.proto',
-        output: './protos',
-
+        output: './protos'
       }],
       optimization: false,
       outputHashing: 'none',

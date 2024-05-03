@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package userplaid;
+
+// The greeter service definition.
+service UserPlaidService {
+  // Sends a UUID to the Plaid Service
+  rpc SendUserDetails (UserDetailsRequest) returns (UserDetailsResponse) {}
+}
+
+// The request message containing user details.
+message UserDetailsRequest {
+  string uuid = 1;
+  string auth0ID = 2;
+  string plaidAccessToken = 3; // This could be a session or auth token if needed
+}
+
+// The response message containing the response status.
+message UserDetailsResponse {
+  string message = 1;
+}

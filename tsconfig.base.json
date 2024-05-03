@@ -17,7 +17,8 @@
     "paths": {
       "@prowl/api-interfaces": ["libs/api-interfaces/src/index.ts"],
       "@prowl/common": ["libs/common/src/index.ts"],
-      "@prowl/db-entities": ["libs/db-entities/src/index.ts"]
+      "@prowl/db-entities": ["libs/db-entities/src/index.ts"],
+      "@prowl/protos": ["libs/protos/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

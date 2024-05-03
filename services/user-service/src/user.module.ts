@@ -10,6 +10,9 @@ import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig,
 } from '@nestjs/apollo';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UserGRPCController } from './gRPC/user-gRPC.controller';
+import { UserGRPCService } from './gRPC/user-gRPC.service';
 
 @Module({
   imports: [
@@ -39,8 +42,19 @@ import {
       },
       context: ({ req, res }) => ({ req, res }),
     }),
+    ClientsModule.register([
+      {
+        name: 'USER_PLAID_SERVICE',
+        transport: Transport.GRPC,
+        options: {
+          package: 'userplaid',
+          protoPath: join(__dirname, './protos/user_plaid_service.proto'),
+          url: 'localhost:5554',
+        },
+      },
+    ]),
   ],
-  controllers: [],
-  providers: [UserResolver, UserService],
+  controllers: [UserGRPCController],
+  providers: [UserGRPCController, UserGRPCService, UserResolver, UserService],
 })
-export class AppModule {}
+export class UserModule {}

@@ -34,7 +34,7 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": []
+      "exclude": ["services/plaid-service-e2e/**/*"]
     }
   ],
   "generators": {
