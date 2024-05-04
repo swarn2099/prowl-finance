@@ -4,7 +4,7 @@ import { TransactionService } from './transactions.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   PlaidAccount,
-  PlaidUser,
+  PlaidItem,
   Transaction,
   TransactionCategory,
 } from '@prowl/db-entities';
@@ -16,7 +16,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       envFilePath: ['.env'],
     }),
-    TypeOrmModule.forFeature([PlaidUser]),
+    TypeOrmModule.forFeature([PlaidItem]),
     TypeOrmModule.forFeature([PlaidAccount], 'user-db-connection'),
     TypeOrmModule.forFeature([Transaction], 'transaction-db-connection'),
     TypeOrmModule.forFeature(

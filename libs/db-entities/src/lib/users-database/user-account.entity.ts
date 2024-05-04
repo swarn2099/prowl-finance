@@ -1,5 +1,6 @@
 // libs/db-entities/src/lib/user.entity.ts
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, JoinColumn, ManyToOne } from 'typeorm';
+import { PlaidItem } from '../plaid-database/plaid-item.entity';
 
 @Entity('plaid_account')
 export class PlaidAccount {
@@ -41,4 +42,8 @@ export class PlaidAccount {
 
   @Column()
   type!: string;
+
+  // @ManyToOne(() => PlaidItem)
+  // @JoinColumn({ name: 'item_id'})
+  // item!: PlaidItem;
 }

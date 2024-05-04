@@ -57,4 +57,4 @@ import { UserGRPCService } from './gRPC/user-gRPC.service';
   controllers: [UserGRPCController],
   providers: [UserGRPCController, UserGRPCService, UserResolver, UserService],
 })
-export class UserModule {}
+export class AppModule {}

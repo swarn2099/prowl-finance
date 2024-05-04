@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import {
   PlaidAccount,
-  PlaidUser,
+  PlaidItem,
   Transaction,
   TransactionCategory,
 } from '@prowl/db-entities';
@@ -13,8 +13,8 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class TransactionService {
   constructor(
-    @InjectRepository(PlaidUser)
-    private plaidUserRepository: Repository<PlaidUser>,
+    @InjectRepository(PlaidItem)
+    private plaidItemRepository: Repository<PlaidItem>,
 
     @InjectRepository(PlaidAccount, 'user-db-connection')
     private userRepository: Repository<PlaidAccount>,
@@ -29,10 +29,13 @@ export class TransactionService {
     private readonly configService: ConfigService
   ) {}
 
-  async getTransactions() {
-    const uuid = '18f372ff-8b5e-45d1-a572-b30377a98842';
-    const plaidAccessToken = await this.getPlaidAccessToken(uuid);
-    let nextCursor = null;
+  async getTransactions(payload) {
+    const { webhook_type, webhook_code, item_id, ...payloadData } = payload;
+
+    // get uui
+    const { uuid, access_token, transactionPageKey, ...plaidAccessToken } =
+      await this.getPlaidAccessToken(item_id);
+    let nextCursor = transactionPageKey;
     let hasMore = false;
 
     do {
@@ -44,7 +47,7 @@ export class TransactionService {
         has_more,
         next_cursor,
         ...response
-      } = await this.syncPlaidTransactions(plaidAccessToken, nextCursor);
+      } = await this.syncPlaidTransactions(access_token, nextCursor);
 
       // Handle missing accounts
       const missingAccounts = await this.getMissingAccounts(accounts);
@@ -68,10 +71,12 @@ export class TransactionService {
     return { response: 'success' };
   }
 
-  private async getPlaidAccessToken(uuid: string): Promise<string> {
-    const { plaidAccessToken }: PlaidUser =
-      await this.plaidUserRepository.findOneBy({ uuid });
-    return plaidAccessToken;
+  private async getPlaidAccessToken(item_id: string): Promise<PlaidItem> {
+    const plaidItemUser: PlaidItem = await this.plaidItemRepository.findOneBy({
+      item_id,
+    });
+    console.log('access_token:', plaidItemUser.access_token);
+    return plaidItemUser;
   }
 
   private async syncPlaidTransactions(
@@ -92,7 +97,7 @@ export class TransactionService {
   }
 
   private async updatePlaidUserNextCursor(uuid: string, nextCursor: string) {
-    await this.plaidUserRepository.update(
+    await this.plaidItemRepository.update(
       { uuid },
       { transactionPageKey: nextCursor }
     );
@@ -139,6 +144,7 @@ export class TransactionService {
         type: account.type,
       };
     });
+
     return await this.userRepository.save(accountsWithUuid);
   }
 
@@ -151,6 +157,7 @@ export class TransactionService {
       const existingTransaction = await this.transactionRepository.findOneBy({
         transaction_id: transaction.transaction_id,
       });
+
       if (!existingTransaction) {
         const newTransaction = this.mapTransactionData(
           transaction,

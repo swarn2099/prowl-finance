@@ -1,16 +1,19 @@
 // libs/db-entities/src/lib/user.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
-export class PlaidUser {
-  @PrimaryGeneratedColumn('uuid')
+export class PlaidItem {
+  @PrimaryColumn('uuid')
   uuid!: string;
 
   @Column()
   auth0ID!: string;
 
   @Column()
-  plaidAccessToken!: string;
+  item_id!: string;
+
+  @Column()
+  access_token!: string;
 
   @Column({ nullable: true })
   transactionPageKey!: string;

@@ -8,14 +8,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Transaction, TransactionCategory } from '@prowl/db-entities';
 import { join } from 'path';
-import {
-  TransactionCategoryResolver,
-  TransactionResolver,
-  UserTranscationsResolver,
-} from './resolvers';
+import { TransactionResolver, UserTranscationsResolver } from './resolvers';
 import { TransactionService, UserTransactionService } from './services';
-import { User } from './user.extension';
-import depthLimit from 'graphql-depth-limit';
+import { User } from './extensions/user.extension';
 
 @Module({
   imports: [
@@ -47,7 +42,6 @@ import depthLimit from 'graphql-depth-limit';
       buildSchemaOptions: {
         orphanedTypes: [User],
       },
-      validationRules: [depthLimit(5)],
       context: ({ req, res }) => ({ req, res }),
     }),
   ],

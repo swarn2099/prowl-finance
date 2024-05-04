@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PlaidUserModule } from './plaid-user/plaid-user.module';
+import { PlaidItemModule } from './plaid-item/plaid-item.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   PlaidAccount,
-  PlaidUser,
+  PlaidItem,
   Transaction,
   TransactionCategory,
 } from '@prowl/db-entities';
@@ -26,7 +26,7 @@ import { PlaidService } from './plaid.service';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('PLAID_DB_NAME'),
-        entities: [PlaidUser], // Ensure User is listed here
+        entities: [PlaidItem], // Ensure User is listed here
         synchronize: true, // Typically false in production
       }),
     }),
@@ -60,15 +60,15 @@ import { PlaidService } from './plaid.service';
         synchronize: true, // Typically false in production
       }),
     }),
-    TypeOrmModule.forFeature([PlaidUser]),
+    TypeOrmModule.forFeature([PlaidItem]),
     TypeOrmModule.forFeature([PlaidAccount]),
     TypeOrmModule.forFeature([Transaction]),
     TypeOrmModule.forFeature([TransactionCategory]),
-    PlaidUserModule,
+    PlaidItemModule,
     TransactionsModule,
   ],
   controllers: [],
   providers: [PlaidService],
   exports: [],
 })
-export class PlaidModule {}
+export class AppModule {}

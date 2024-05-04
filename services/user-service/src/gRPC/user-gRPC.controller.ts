@@ -15,13 +15,13 @@ export class UserGRPCController {
 
   @Post('update-plaid-details')
   async updatePlaidDetails(
-    @Body() body: { auth0ID: string; plaidAccessToken: string }
+    @Body() body: { auth0ID: string; public_access_token: string }
   ) {
     console.log('From user-gRPC.controller.ts: ', body);
     try {
       const result = await this.userGRPCService.sendUserDetails(
         body.auth0ID,
-        body.plaidAccessToken
+        body.public_access_token
       );
       return result;
     } catch (error) {

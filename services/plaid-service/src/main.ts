@@ -6,7 +6,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { PlaidModule } from './plaid.module';
+import { AppModule } from './app.module';
 
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { ReflectionService } from '@grpc/reflection';
@@ -14,7 +14,7 @@ import { ReflectionService } from '@grpc/reflection';
 import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(PlaidModule);
+  const app = await NestFactory.create(AppModule);
 
   // microservice connection
   app.connectMicroservice<MicroserviceOptions>({

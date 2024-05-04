@@ -12,10 +12,11 @@ service UserPlaidService {
 message UserDetailsRequest {
   string uuid = 1;
   string auth0ID = 2;
-  string plaidAccessToken = 3; // This could be a session or auth token if needed
+  string public_access_token = 3; // This could be a session or auth token if needed
 }
 
 // The response message containing the response status.
 message UserDetailsResponse {
-  string message = 1;
+  string status = 1;
+  string message = 2;
 }

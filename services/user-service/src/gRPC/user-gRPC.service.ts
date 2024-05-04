@@ -19,17 +19,17 @@ export class UserGRPCService implements OnModuleInit {
   }
   async sendUserDetails(
     auth0ID: string,
-    plaidAccessToken: string
+    public_access_token: string
   ): Promise<{ message: string }> {
     // first get the user details from the user service
     const { uuid } = await this.userService.findById(auth0ID);
-    console.log('Sending this data: ', uuid, plaidAccessToken);
+    console.log('Sending this data: ', uuid, auth0ID, public_access_token);
 
     return new Promise((resolve, reject) => {
       const response = this.plaidService.SendUserDetails({
         uuid,
         auth0ID,
-        plaidAccessToken,
+        publicAccessToken: public_access_token,
       });
       response.subscribe({
         next: (data) => {

@@ -54,5 +54,4 @@ type User {
 
 type Query {
   getTransactionById(id: String!): Transaction!
-  getAllTransactions: [Transaction!]!
 }

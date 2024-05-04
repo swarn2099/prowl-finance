@@ -13,16 +13,8 @@ export class TransactionService {
     private transactionCategoryRepository: Repository<TransactionCategory>
   ) {}
 
-  async findAll(): Promise<Transaction[]> {
-    return await this.transactionRepository.find();
-  }
-
   async findById(transaction_id: string): Promise<Transaction | undefined> {
     return await this.transactionRepository.findOneBy({ transaction_id });
-  }
-
-  async getTransactionsByUserId(uuid: string): Promise<Transaction[]> {
-    return await this.transactionRepository.find({ where: { uuid } });
   }
 
   async getCategoriesByTransactionId(
@@ -32,4 +24,8 @@ export class TransactionService {
       where: { transaction: { transaction_id } },
     });
   }
+
+  // async getTransactionsByUserId(uuid: string): Promise<Transaction[]> {
+  //   return await this.transactionRepository.find({ where: { uuid } });
+  // }
 }
