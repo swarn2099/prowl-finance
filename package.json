@@ -77,6 +77,8 @@
     "class-validator": "^0.14.1",
     "express-oauth2-jwt-bearer": "^1.6.0",
     "graphql": "^16.8.1",
+    "graphql-depth-limit": "^1.1.0",
+    "graphql-type-json": "^0.3.2",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0",
     "passport": "^0.7.0",

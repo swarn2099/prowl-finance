@@ -1,16 +1,7 @@
 // services/transaction-service/src/app/transaction/transaction.resolver.ts
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  ResolveReference,
-  ResolveField,
-  Parent,
-} from '@nestjs/graphql';
+import { Resolver, Query, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { TransactionService } from '../services/transaction.service';
-import { Transaction } from '@prowl/api-interfaces';
-import { User as UserExtension } from '../user.extension';
+import { Transaction, TransactionCategory } from '@prowl/api-interfaces';
 
 @Resolver((of) => Transaction)
 export class TransactionResolver {
@@ -26,50 +17,21 @@ export class TransactionResolver {
     return this.transactionService.findAll();
   }
 
-  @Mutation((returns) => Transaction)
-  async createTransaction(
-    @Args('amount') amount: number,
-    @Args('description') description: string,
-    @Args('userId') userId: string
-  ): Promise<Transaction> {
-    console.log('userId', userId, 'amount', amount, 'description', description);
-
-    try {
-      return this.transactionService.create(amount, description, userId);
-    } catch (error) {
-      console.log('error', error);
-    }
-  }
-
-  @Mutation((returns) => Transaction)
-  async updateTransaction(
-    @Args('id') id: string,
-    @Args('amount') amount: number,
-    @Args('description') description: string
-  ): Promise<Transaction> {
-    return this.transactionService.update(id, { amount, description });
-  }
-
-  @Mutation((returns) => Transaction)
-  async deleteTransaction(@Args('id') id: string): Promise<Transaction> {
-    return this.transactionService.remove(id);
-  }
-
-  // @ResolveField((of) => UserExtension)
-  // user(@Parent() transaction: Transaction): any {
-  //   return { __typename: 'User', id: transaction.userUuid };
+  // @ResolveField(() => [TransactionCategory])
+  // async categories(
+  //   @Parent() transaction: Transaction
+  // ): Promise<TransactionCategory[]> {
+  //   return await this.transactionService.getCategoriesByTransactionId(
+  //     transaction.transaction_id
+  //   );
   // }
 
-  // @ResolveField((of) => UserExtension)
-  // userUuid(@Parent() transaction: Transaction): any {
-  //   return { __typename: 'Transaction', id: transaction.userUuid };
-  // }
-
-  // @ResolveReference()
-  // resolveReference(ref: {
-  //   __typename: string;
-  //   id: string;
-  // }): Promise<Transaction> {
-  //   return this.transactionService.findById(ref.id);
-  // }
+  @ResolveField(() => [TransactionCategory])
+  async categories(
+    @Parent() transaction: Transaction
+  ): Promise<TransactionCategory[]> {
+    return this.transactionService.getCategoriesByTransactionId(
+      transaction.transaction_id
+    );
+  }
 }

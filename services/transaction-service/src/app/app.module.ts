@@ -6,11 +6,16 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Transaction } from '@prowl/db-entities';
+import { Transaction, TransactionCategory } from '@prowl/db-entities';
 import { join } from 'path';
-import { TransactionResolver, UserTranscationsResolver } from './resolvers';
+import {
+  TransactionCategoryResolver,
+  TransactionResolver,
+  UserTranscationsResolver,
+} from './resolvers';
 import { TransactionService, UserTransactionService } from './services';
 import { User } from './user.extension';
+import depthLimit from 'graphql-depth-limit';
 
 @Module({
   imports: [
@@ -27,11 +32,12 @@ import { User } from './user.extension';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [Transaction],
+        entities: [Transaction, TransactionCategory],
         synchronize: true, // Typically false in production
       }),
     }),
     TypeOrmModule.forFeature([Transaction]),
+    TypeOrmModule.forFeature([TransactionCategory]),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {
@@ -41,6 +47,7 @@ import { User } from './user.extension';
       buildSchemaOptions: {
         orphanedTypes: [User],
       },
+      validationRules: [depthLimit(5)],
       context: ({ req, res }) => ({ req, res }),
     }),
   ],

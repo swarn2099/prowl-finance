@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Transaction } from '@prowl/db-entities';
+import { Transaction, TransactionCategory } from '@prowl/db-entities';
 
 @Injectable()
 export class UserTransactionService {
@@ -11,11 +11,11 @@ export class UserTransactionService {
     private transactionRepository: Repository<Transaction>
   ) {}
 
-  async getTransactionsByUserId(userUuid: string): Promise<Transaction[]> {
-    console.log('in the service: ', userUuid);
-    return await this.transactionRepository.find({ where: { userUuid } });
+  async getTransactionsByUserId(uuid: string): Promise<Transaction[]> {
+    return await this.transactionRepository.find({ where: { uuid } });
   }
-  async findById(id: string): Promise<Transaction | undefined> {
-    return await this.transactionRepository.findOneBy({ id });
+
+  async findById(transaction_id: string): Promise<Transaction | undefined> {
+    return await this.transactionRepository.findOneBy({ transaction_id });
   }
 }

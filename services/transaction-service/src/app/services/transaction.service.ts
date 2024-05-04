@@ -2,57 +2,34 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Transaction } from '@prowl/db-entities';
+import { Transaction, TransactionCategory } from '@prowl/db-entities';
 
 @Injectable()
 export class TransactionService {
   constructor(
     @InjectRepository(Transaction)
-    private transactionRepository: Repository<Transaction>
+    private transactionRepository: Repository<Transaction>,
+    @InjectRepository(TransactionCategory)
+    private transactionCategoryRepository: Repository<TransactionCategory>
   ) {}
 
   async findAll(): Promise<Transaction[]> {
     return await this.transactionRepository.find();
   }
 
-  async findById(id: string): Promise<Transaction | undefined> {
-    return await this.transactionRepository.findOneBy({ id });
+  async findById(transaction_id: string): Promise<Transaction | undefined> {
+    return await this.transactionRepository.findOneBy({ transaction_id });
   }
 
-  async create(
-    amount: number,
-    description: string,
-    userUuid: string
-  ): Promise<Transaction> {
-    const newTransaction = this.transactionRepository.create({
-      amount,
-      description,
-      userUuid,
+  async getTransactionsByUserId(uuid: string): Promise<Transaction[]> {
+    return await this.transactionRepository.find({ where: { uuid } });
+  }
+
+  async getCategoriesByTransactionId(
+    transaction_id: string
+  ): Promise<TransactionCategory[]> {
+    return await this.transactionCategoryRepository.find({
+      where: { transaction: { transaction_id } },
     });
-    await this.transactionRepository.save(newTransaction);
-    return newTransaction;
-  }
-
-  async update(id: string, attrs: Partial<Transaction>): Promise<Transaction> {
-    const transaction = await this.transactionRepository.findOneBy({ id });
-    if (!transaction) {
-      throw new Error('Transaction not found');
-    }
-    Object.assign(transaction, attrs);
-    await this.transactionRepository.save(transaction);
-    return transaction;
-  }
-
-  async remove(id: string): Promise<Transaction> {
-    const transaction = await this.transactionRepository.findOneBy({ id });
-    if (!transaction) {
-      throw new Error('Transaction not found');
-    }
-    await this.transactionRepository.remove(transaction);
-    return transaction;
-  }
-
-  async getTransactionsByUserId(userUuid: string): Promise<Transaction[]> {
-    return await this.transactionRepository.find({ where: { userUuid } });
   }
 }

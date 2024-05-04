@@ -11,4 +11,7 @@ export class PlaidUser {
 
   @Column()
   plaidAccessToken!: string;
+
+  @Column({ nullable: true })
+  transactionPageKey!: string;
 }

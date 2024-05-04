@@ -6,7 +6,7 @@ import {
   ResolveReference,
 } from '@nestjs/graphql';
 import { User as UserExtension } from '../user.extension';
-import { Transaction } from '@prowl/api-interfaces';
+import { Transaction, TransactionCategory } from '@prowl/api-interfaces';
 import { UserTransactionService } from '../services/user-transaction.service';
 import { decrypt, key } from '@prowl/common';
 
@@ -24,6 +24,6 @@ export class UserTranscationsResolver {
     const response = await this.transactionService.getTransactionsByUserId(
       user.uuid
     );
-    return response.map((item) => ({ ...item, userUuid: 'this is masked :)' }));
+    return response;
   }
 }

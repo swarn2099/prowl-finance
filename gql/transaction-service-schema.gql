@@ -2,18 +2,48 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Transaction {
+type TransactionCategory {
   id: ID!
-  amount: Float!
-  date: DateTime!
-  description: String!
-  userUuid: String!
+  category: String!
+  status: String!
+  lastModified: DateTime!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Transaction {
+  transaction_id: ID!
+  account_id: ID!
+  account_owner: String
+  amount: Float!
+  authorized_date: String
+  category_id: String
+  categories: [TransactionCategory!]!
+  date: DateTime!
+  iso_currency_code: String!
+  location: JSON!
+  merchant_entity_id: String
+  merchant_name: String
+  name: String!
+  payment_channel: String!
+  payment_meta: JSON!
+  pending: Boolean!
+  pending_transaction_id: String
+  personal_finance_category: JSON!
+  transaction_code: String
+  transaction_type: String!
+  unofficial_currency_code: String
+  status: String!
+  lastModified: DateTime!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 type User {
   uuid: ID!
@@ -23,10 +53,4 @@ type User {
 type Query {
   getTransactionById(id: String!): Transaction!
   getAllTransactions: [Transaction!]!
-}
-
-type Mutation {
-  createTransaction(amount: Float!, description: String!, userId: String!): Transaction!
-  updateTransaction(id: String!, amount: Float!, description: String!): Transaction!
-  deleteTransaction(id: String!): Transaction!
 }
