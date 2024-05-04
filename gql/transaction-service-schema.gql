@@ -33,6 +33,8 @@ type Transaction {
   pending: Boolean!
   pending_transaction_id: String
   personal_finance_category: JSON!
+  personal_finance_category_icon_url: String
+  logo_url: String
   transaction_code: String
   transaction_type: String!
   unofficial_currency_code: String

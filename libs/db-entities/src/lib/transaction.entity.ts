@@ -62,6 +62,9 @@ export class Transaction {
   @Column('date')
   date!: string;
 
+  @Column({ nullable: true })
+  logo_url!: string;
+
   @Column()
   iso_currency_code!: string;
 
@@ -91,6 +94,9 @@ export class Transaction {
 
   @Column('jsonb')
   personal_finance_category!: object;
+
+  @Column({ nullable: true })
+  personal_finance_category_icon_url!: string;
 
   @Column({ nullable: true })
   transaction_code!: string;

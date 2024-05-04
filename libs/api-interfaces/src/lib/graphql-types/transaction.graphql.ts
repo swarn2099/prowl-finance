@@ -79,6 +79,14 @@ export class Transaction {
 
   @Field({ nullable: true })
   @Directive('@shareable')
+  personal_finance_category_icon_url!: string;
+
+  @Field({ nullable: true })
+  @Directive('@shareable')
+  logo_url!: string;
+
+  @Field({ nullable: true })
+  @Directive('@shareable')
   transaction_code!: string;
 
   @Field()

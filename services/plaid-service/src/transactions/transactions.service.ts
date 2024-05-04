@@ -252,6 +252,7 @@ export class TransactionService {
       date: transaction.date,
       iso_currency_code: transaction.iso_currency_code,
       location: transaction.location,
+      logo_url: transaction.logo_url,
       merchant_entity_id: transaction.merchant_entity_id,
       merchant_name: transaction.merchant_name,
       name: transaction.name,
@@ -260,6 +261,8 @@ export class TransactionService {
       pending: transaction.pending,
       pending_transaction_id: transaction.pending_transaction_id,
       personal_finance_category: transaction.personal_finance_category,
+      personal_finance_category_icon_url:
+        transaction.personal_finance_category_icon_url,
       transaction_code: transaction.transaction_code,
       transaction_type: transaction.transaction_type,
       unofficial_currency_code: transaction.unofficial_currency_code,
