@@ -53,7 +53,7 @@ export const ProfileStyles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 4,
     backgroundColor: '#EFEFEF',
-    marginHorizontal: 5,
+    marginHorizontal: 15,
   },
   moreIcon: {
     fontSize: 24,
@@ -82,13 +82,14 @@ export const ProfileStyles = StyleSheet.create({
     margin: 5,
     marginTop: 10,
     backgroundColor: '#fff',
-    borderRadius: 5,
+    borderRadius: 10,
     padding: 10,
+    alignItems: 'center',
   },
   transactionLogo: {
-    width: '100%',
+    width: '50%',
     height: '50%',
-    borderRadius: 80,
+    borderRadius: 100,
     resizeMode: 'contain',
   },
   transactionDetails: {
@@ -97,6 +98,7 @@ export const ProfileStyles = StyleSheet.create({
   merchantName: {
     textAlign: 'center',
     fontWeight: 'bold',
+    color: 'grey',
     fontSize: 12,
   },
   additionalDetails: {
@@ -116,7 +118,7 @@ export const ProfileStyles = StyleSheet.create({
   transactionAmount: {
     textAlign: 'center',
     fontSize: 17,
-    color: '#4CAF50',
+    color: '#000',
     fontWeight: '800',
     marginTop: 5,
   },

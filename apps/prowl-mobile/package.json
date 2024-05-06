@@ -5,9 +5,10 @@
   "dependencies": {
     "@testing-library/jest-native": "*",
     "@testing-library/react-native": "*",
+    "expo": "*",
     "metro-config": "*",
     "react-native": "*",
-    "expo": "*",
+    "react-native-pager-view": "^6.3.1",
     "react-native-svg": "*",
     "react-native-web": "*"
   },

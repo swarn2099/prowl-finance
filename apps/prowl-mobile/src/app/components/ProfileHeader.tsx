@@ -30,14 +30,14 @@ export const ProfileHeader = () => {
       </View>
       <Text style={styles.name}>Swarn Singh</Text>
       <Text style={styles.bio}>@swarnsingh</Text>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button}>
           <Text>Following</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
           <Text>Message</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </>
   );
 };

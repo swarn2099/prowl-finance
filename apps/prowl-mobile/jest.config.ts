@@ -6,6 +6,8 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/test-setup.ts'],
   moduleNameMapper: {
     '\\.svg$': '@nx/expo/plugins/jest/svg-mock',
+    'react-native-webview':
+      '<rootDir>/node_modules/react-native-webview/src/index.ts',
   },
   transform: {
     '.[jt]sx?$': [

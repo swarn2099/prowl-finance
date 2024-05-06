@@ -16,6 +16,7 @@ const screenStyle = StyleSheet.create({
     backgroundColor: '#fff', // Set the background color to white
   },
 });
+
 // Dummy screen components
 function HomeScreen() {
   return (
@@ -33,26 +34,10 @@ function SearchScreen() {
   );
 }
 
-function AddPostScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Add Post!</Text>
-    </View>
-  );
-}
-
 function NotificationScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Notifications!</Text>
-    </View>
-  );
-}
-
-function ProfileScreen() {
-  return (
-    <View style={screenStyle.screenContainer}>
-      <Text>Profile!</Text>
     </View>
   );
 }
@@ -69,11 +54,11 @@ function MyTabs() {
           if (route.name === 'Home') {
             iconName = 'home';
           } else if (route.name === 'Search') {
-            iconName = 'search';
+            iconName = 'car';
           } else if (route.name === 'AddPost') {
             iconName = 'add-circle';
           } else if (route.name === 'Notifications') {
-            iconName = 'heart';
+            iconName = 'book';
           } else if (route.name === 'Profile') {
             iconName = 'person';
           }
@@ -82,8 +67,9 @@ function MyTabs() {
         },
         tabBarLabel: () => null, // This hides the label
 
-        tabBarActiveTintColor: 'tomato',
+        tabBarActiveTintColor: 'black',
         tabBarInactiveTintColor: 'gray',
+        headerShadowVisible: false, // applied here
       })}
     >
       <>
@@ -100,10 +86,10 @@ function MyTabs() {
 export const App = () => {
   // Initialize Apollo Client
   const client = new ApolloClient({
-    uri: 'https://521b-68-251-49-18.ngrok-free.app/graphql',
+    uri: 'https://07d8-68-251-49-18.ngrok-free.app/graphql',
     headers: {
       authorization:
-        'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjZwa0FNazRpM2NpQnowUWlqc0FmeiJ9.eyJuaWNrbmFtZSI6InN3YXJuMjA5OSIsIm5hbWUiOiJzd2FybjIwOTlAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyLzY3NTAyY2FhNWNmM2RmYTgwNmRlODVjNzA1ZGZjNDJmP3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGc3cucG5nIiwidXBkYXRlZF9hdCI6IjIwMjQtMDUtMDRUMjI6MDY6NTMuMjQ2WiIsImVtYWlsIjoic3dhcm4yMDk5QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9kZXYteXV5Y2p6Z3MxeWVkbGp1aC51cy5hdXRoMC5jb20vIiwiYXVkIjoiNFhoM0lpeTBYWmgyUmRlcDkzRkhpQTRZSnFiRUJ1NHoiLCJpYXQiOjE3MTQ4NjA0MTQsImV4cCI6MTcxNDg5NjQxNCwic3ViIjoiYXV0aDB8NjYyYzk1MDBlOGNiMDA2ZDk2Mzc1YWRjIiwic2lkIjoiLWRFSUtUY0RLWkEtWkt0dDhfQnl0ajZYUDBFTzloS1AifQ.Y8mOPnyFrEl_JSx6jAyMl0o6IfnVKM--HLzgyYqY-Sa-0k0d57WB33siampVf4JMvshR4-wkaGK9tcqTJX9AmmUrbw7wlySfW6VipdZ8V4AcvxfFuCMTo2ShEYzD94Zrj9irXGYWAbVI-Z3-IFpJwhFK9xbwnqt8i8q85amCQMfpCGYyte2J82dFSdST6qPulpGghKzZEiL2JKCMbHFiWOwr4GvMR23d1S4gCtVVuYSzbFbHnOBsPAjSvCOGFb6sYXCAom_jogk1RyBc6AV7VxXN6tEznQqB9aORa9PoEX7OJBg-IB-PiG1KLg8OySPxCIzpmh7SINvijwFiC6s1iw',
+        'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjZwa0FNazRpM2NpQnowUWlqc0FmeiJ9.eyJuaWNrbmFtZSI6InN3YXJuMjA5OSIsIm5hbWUiOiJzd2FybjIwOTlAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyLzY3NTAyY2FhNWNmM2RmYTgwNmRlODVjNzA1ZGZjNDJmP3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGc3cucG5nIiwidXBkYXRlZF9hdCI6IjIwMjQtMDUtMDZUMDQ6NTE6NTcuMjMxWiIsImVtYWlsIjoic3dhcm4yMDk5QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9kZXYteXV5Y2p6Z3MxeWVkbGp1aC51cy5hdXRoMC5jb20vIiwiYXVkIjoiNFhoM0lpeTBYWmgyUmRlcDkzRkhpQTRZSnFiRUJ1NHoiLCJpYXQiOjE3MTQ5NzExMTgsImV4cCI6MTcxNTAwNzExOCwic3ViIjoiYXV0aDB8NjYyYzk1MDBlOGNiMDA2ZDk2Mzc1YWRjIiwic2lkIjoiLWRFSUtUY0RLWkEtWkt0dDhfQnl0ajZYUDBFTzloS1AifQ.IOgDgGtxmDlvb3PD3dvFWg9KLSxDGyDT8VKRZwM_Y1OX0yIf2UMXNd-KU3ufLIbtASlUzuKWBXXn-Loak9I6WEofFbIzAgL5PQlAPx0Ac5sevFfh_MI_09NtK_qYUJF4NPORD3pgWNb0kK2d3poqJLk_pcYsJoYbSv9Ih9DyPusP804HFaCgJiBBu9WROrNJcmmku1stpO4OtOPgHlCwbErJsZt4dm_40TMCqQTMwKMnswI7fMBNBUIkhrw4mC8wbsqCJ4Mrn00XCNkoDWKnlQEnhrSthoxAOYusEbGdNmt9_20k9qynrC5ANSQMqT9emprmkud2zjzvy2j9te50jQ',
     },
     cache: new InMemoryCache(),
   });
