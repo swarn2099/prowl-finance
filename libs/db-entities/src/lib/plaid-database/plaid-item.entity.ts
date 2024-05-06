@@ -3,14 +3,14 @@ import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class PlaidItem {
-  @PrimaryColumn('uuid')
-  uuid!: string;
+  @PrimaryColumn()
+  item_id!: string;
 
   @Column()
   auth0ID!: string;
 
-  @Column()
-  item_id!: string;
+  @Column('uuid')
+  uuid!: string;
 
   @Column()
   access_token!: string;

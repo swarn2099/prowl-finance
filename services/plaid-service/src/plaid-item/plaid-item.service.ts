@@ -19,12 +19,6 @@ export class PlaidItemService {
     auth0ID: string,
     publicAccessToken: string
   ): Promise<any> {
-    // // first check if user exists, if so return user with message saying user already exists
-    // const user = await this.plaidItemRepository.findOneBy({ auth0ID });
-    // if (user) {
-    //   return user;
-    // }
-
     const plaidClient = this.plaidService.getClient();
 
     // first exchange the public token for an access token
@@ -44,6 +38,10 @@ export class PlaidItemService {
 
     try {
       await this.plaidItemRepository.save(newUser);
+      const saveWebHookUrl = await plaidClient.itemWebhookUpdate({
+        access_token,
+        webhook: `https://2e72-68-251-49-18.ngrok-free.app/api/transactions/webhook`,
+      });
       return {
         message: 'User credentials saved successfully.',
         status: 200,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import {
   PlaidAccount,
   PlaidItem,
@@ -28,37 +28,46 @@ export class TransactionService {
     private readonly plaidService: PlaidService,
     private readonly configService: ConfigService
   ) {}
-
+  /**
+   * Main method to process webhook payload from Plaid and sync transactions.
+   */
   async getTransactions(payload) {
-    const { webhook_type, webhook_code, item_id, ...payloadData } = payload;
-
-    // get uui
-    const { uuid, access_token, transactionPageKey, ...plaidAccessToken } =
+    const { webhook_type, webhook_code, item_id } = payload;
+    const { uuid, access_token, transactionPageKey } =
       await this.getPlaidAccessToken(item_id);
+
     let nextCursor = transactionPageKey;
     let hasMore = false;
 
     do {
-      const {
-        accounts,
-        added,
-        modified,
-        removed,
-        has_more,
-        next_cursor,
-        ...response
-      } = await this.syncPlaidTransactions(access_token, nextCursor);
+      const { accounts, added, modified, removed, has_more, next_cursor } =
+        await this.syncPlaidTransactions(access_token, nextCursor);
 
-      // Handle missing accounts
-      const missingAccounts = await this.getMissingAccounts(accounts);
-      if (missingAccounts.length > 0) {
-        await this.saveMissingAccounts(missingAccounts, uuid);
+      if (accounts.length > 0) {
+        await this.processAccounts(accounts, uuid);
       }
 
-      // Next, handle transactions
-      await this.processAddedTransactions(added, uuid, 'added');
-      await this.processModifiedTransactions(modified, uuid, 'modified');
-      await this.processRemovedTransactions(removed, 'removed');
+      await this.transactionRepository.manager.transaction(
+        async (transactionalEntityManager) => {
+          await this.processAddedTransactions(
+            added,
+            uuid,
+            'added',
+            transactionalEntityManager
+          );
+          await this.processModifiedTransactions(
+            modified,
+            uuid,
+            'modified',
+            transactionalEntityManager
+          );
+          await this.processRemovedTransactions(
+            removed,
+            'removed',
+            transactionalEntityManager
+          );
+        }
+      );
 
       nextCursor = next_cursor;
       hasMore = has_more;
@@ -69,6 +78,141 @@ export class TransactionService {
     } while (hasMore);
 
     return { response: 'success' };
+  }
+
+  private async processAccounts(accounts: any[], uuid: string) {
+    const missingAccounts = await this.getMissingAccounts(accounts);
+    if (missingAccounts.length > 0) {
+      await this.saveMissingAccounts(missingAccounts, uuid);
+    }
+  }
+
+  /**
+   * Process transactions that have been added on Plaid.
+   */
+  private async processAddedTransactions(
+    transactions: any[],
+    uuid: string,
+    status: string,
+    transactionalEntityManager: EntityManager
+  ) {
+    // Sort transactions by date to ensure correct sequence
+    transactions.sort((a, b) => a.date.localeCompare(b.date));
+
+    // This object will store the highest current index of transactions for each date
+    const currentIndexForDate = {};
+
+    for (const transaction of transactions) {
+      const date = transaction.date;
+      // Check if the current date is already processed
+      if (!currentIndexForDate[date]) {
+        // If not, retrieve the maximum index from the database and store it
+        currentIndexForDate[date] =
+          (await this.getMaxIndexOfTransactionForDate(
+            date,
+            transactionalEntityManager
+          )) + 1;
+      } else {
+        // If already processed, increment the current index
+        currentIndexForDate[date]++;
+      }
+
+      // Map the transaction data including the current index
+      const newTransaction = this.mapTransactionData(
+        transaction,
+        uuid,
+        status,
+        currentIndexForDate[date]
+      );
+
+      // Use transaction manager to save the new transaction
+      await transactionalEntityManager.save(Transaction, newTransaction);
+
+      // Handle categories
+      await this.saveTransactionCategories(
+        transaction.category,
+        newTransaction,
+        status,
+        transactionalEntityManager
+      );
+    }
+  }
+
+  private async getMaxIndexOfTransactionForDate(
+    date: string,
+    transactionalEntityManager: EntityManager
+  ): Promise<number> {
+    const result = await transactionalEntityManager
+      .createQueryBuilder(Transaction, 'transaction')
+      .select('MAX(transaction.indexofTransaction)', 'max')
+      .where('transaction.date = :date', { date: date })
+      .getRawOne();
+
+    return result.max || 0; // Return 0 if no existing transactions are found for the date
+  }
+
+  /**
+   * Process transactions that have been modified on Plaid.
+   */
+  private async processModifiedTransactions(
+    transactions: any[],
+    uuid: string,
+    status: string,
+    transactionalEntityManager: EntityManager
+  ) {
+    for (const transaction of transactions) {
+      const existingTransaction = await this.transactionRepository.findOneBy({
+        transaction_id: transaction.transaction_id,
+      });
+      if (existingTransaction) {
+        const updatedTransaction = this.mapTransactionData(
+          transaction,
+          uuid,
+          status
+        );
+        await transactionalEntityManager.save({
+          ...existingTransaction,
+          ...updatedTransaction,
+        });
+      }
+    }
+  }
+
+  /**
+   * Process transactions that have been removed on Plaid.
+   */
+  private async processRemovedTransactions(
+    transactions: any[],
+    status: string,
+    transactionalEntityManager: EntityManager
+  ) {
+    const transactionIds = transactions.map((t) => t.transaction_id);
+    await transactionalEntityManager.update(
+      Transaction,
+      { transaction_id: In(transactionIds) },
+      { status: status, lastModified: new Date() }
+    );
+  }
+
+  /**
+   * Helper method to save categories of a transaction.
+   */
+  private async saveTransactionCategories(
+    categories: string[],
+    transaction: Transaction,
+    status: string,
+    transactionalEntityManager: EntityManager
+  ) {
+    await transactionalEntityManager.delete(TransactionCategory, {
+      transaction,
+    });
+    const newCategories = categories.map((category) => ({
+      transaction,
+      category,
+      status,
+      lastModified: new Date(),
+    }));
+    await transactionalEntityManager.save(TransactionCategory, newCategories);
   }
 
   private async getPlaidAccessToken(item_id: string): Promise<PlaidItem> {
@@ -148,105 +292,11 @@ export class TransactionService {
     return await this.userRepository.save(accountsWithUuid);
   }
 
-  private async processAddedTransactions(
-    transactions: any[],
-    uuid: string,
-    status: string
-  ) {
-    for (const transaction of transactions) {
-      const existingTransaction = await this.transactionRepository.findOneBy({
-        transaction_id: transaction.transaction_id,
-      });
-
-      if (!existingTransaction) {
-        const newTransaction = this.mapTransactionData(
-          transaction,
-          uuid,
-          status
-        );
-        await this.transactionRepository.save(newTransaction);
-        await this.saveTransactionCategories(
-          transaction.category,
-          newTransaction,
-          status
-        );
-      }
-    }
-  }
-
-  private async processModifiedTransactions(
-    transactions: any[],
-    uuid: string,
-    status: string
-  ) {
-    for (const transaction of transactions) {
-      const existingTransaction = await this.transactionRepository.findOneBy({
-        transaction_id: transaction.transaction_id,
-      });
-      if (existingTransaction) {
-        const updatedTransaction = this.mapTransactionData(
-          transaction,
-          uuid,
-          status
-        );
-        await this.transactionRepository.save({
-          ...existingTransaction,
-          ...updatedTransaction,
-        });
-        await this.saveTransactionCategories(
-          transaction.category,
-          updatedTransaction,
-          status
-        );
-      }
-    }
-  }
-
-  private async processRemovedTransactions(
-    transactions: any[],
-    status: string
-  ) {
-    const transactionIds = transactions.map((t) => t.transaction_id);
-    const updatePayload = {
-      status: status,
-      lastModified: new Date(),
-    };
-
-    // Update transactions
-    await this.transactionRepository.update(
-      { transaction_id: In(transactionIds) },
-      updatePayload
-    );
-
-    // Update transaction categories
-    await this.transactionCategoriesRepository.update(
-      { transaction: In(transactionIds) },
-      updatePayload
-    );
-  }
-
-  private async saveTransactionCategories(
-    categories: string[],
-    transaction: Transaction,
-    status: string
-  ) {
-    // Delete existing categories
-    await this.transactionCategoriesRepository.delete({ transaction });
-
-    // Save new categories
-    const newCategories = categories.map((category) => ({
-      transaction: transaction,
-      category: category,
-      status: status,
-      lastModified: new Date(),
-    }));
-    await this.transactionCategoriesRepository.save(newCategories);
-  }
-
   private mapTransactionData(
     transaction: any,
     uuid: string,
-    status: string
+    status: string,
+    indexofTransaction?: number
   ): Transaction {
     return {
       transaction_id: transaction.transaction_id,
@@ -276,6 +326,7 @@ export class TransactionService {
       uuid: uuid,
       status: status,
       last_modified: new Date(),
+      indexoftransaction: indexofTransaction,
     } as unknown as Transaction;
   }
 }

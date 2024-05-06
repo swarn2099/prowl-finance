@@ -12,7 +12,13 @@ export class UserTransactionService {
   ) {}
 
   async getTransactionsByUserId(uuid: string): Promise<Transaction[]> {
-    return await this.transactionRepository.find({ where: { uuid } });
+    return await this.transactionRepository.find({
+      where: { uuid },
+      order: {
+        date: 'DESC', // Descending order by date
+        indexoftransaction: 'DESC', // Descending order by indexofTransaction within each date
+      },
+    });
   }
 
   async findById(transaction_id: string): Promise<Transaction | undefined> {

@@ -1,29 +1,3 @@
-// // libs/db-entities/src/lib/transaction.entity.ts
-// import {
-//   Entity,
-//   PrimaryGeneratedColumn,
-//   Column,
-//   CreateDateColumn,
-// } from 'typeorm';
-
-// @Entity()
-// export class Transaction {
-//   @PrimaryGeneratedColumn()
-//   id!: string;
-
-//   @Column()
-//   amount!: number;
-
-//   @Column()
-//   description!: string;
-
-//   @CreateDateColumn()
-//   date!: Date;
-
-//   @Column()
-//   userUuid!: string; // Assuming transactions are linked to a user by userId
-// }
-
 import {
   Entity,
   Column,
@@ -33,6 +7,10 @@ import {
 } from 'typeorm';
 import { TransactionCategory } from './transaction-category.entity';
 
+/**
+ * Entity definition for the `transactions` table.
+ * Includes detailed transaction data along with relational mappings to categories.
+ */
 @Entity('transactions')
 export class Transaction {
   @PrimaryColumn()
@@ -113,6 +91,10 @@ export class Transaction {
   @UpdateDateColumn({ name: 'last_modified' })
   lastModified!: Date;
 
-  @OneToMany((type) => TransactionCategory, (category) => category.transaction)
+  @Column({ type: 'int', default: 0 })
+  indexoftransaction!: number;
+  // Field to track the order of transactions on the same date
+
+  @OneToMany(() => TransactionCategory, (category) => category.transaction)
   categories!: TransactionCategory[];
 }
