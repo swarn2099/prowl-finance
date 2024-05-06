@@ -2,13 +2,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '@prowl/db-entities';
+import { PlaidAccount, User } from '@prowl/db-entities';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: Repository<User>,
+    @InjectRepository(PlaidAccount)
+    private plaidAccountRepository: Repository<PlaidAccount>
   ) {}
 
   maskUUID = (user: User) => {
@@ -21,6 +23,20 @@ export class UserService {
   async findAll(): Promise<User[]> {
     const response = await this.userRepository.find();
     return response.map(this.maskUUID);
+  }
+
+  async getUserAccountInfo(auth0ID: string): Promise<any | undefined> {
+    const { uuid } = await this.userRepository.findOneBy({ auth0ID });
+    console.log('Found UUID: ', uuid);
+
+    // search Plaid Account table for all accounts associated with the user
+    const response = await this.plaidAccountRepository.find({
+      where: { uuid },
+    });
+
+    console.log('List of accounts: ', response);
+
+    return response ? response : undefined;
   }
 
   async findById(auth0ID: string): Promise<User | undefined> {

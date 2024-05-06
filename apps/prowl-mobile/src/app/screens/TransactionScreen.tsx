@@ -16,6 +16,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { AccountsTab } from '../components/AccountTab';
 
 const { height } = Dimensions.get('window');
 const HEADER_MAX_HEIGHT = 200; // Maximum height of the floating header
@@ -48,6 +49,7 @@ const TransactionScreen = () => {
         <Text>Loading...</Text>
       </View>
     );
+
   if (error)
     return (
       <View style={styles.center}>
@@ -120,6 +122,9 @@ const TransactionScreen = () => {
             numColumns={3}
             contentContainerStyle={styles.contentContainer}
           />
+        )}
+        {activeTab === 'accounts' && (
+          <AccountsTab accounts={data?.getUserAccountsInfo} />
         )}
         {/* Repeat for other tabs as needed */}
       </Animated.ScrollView>

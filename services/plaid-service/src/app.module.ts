@@ -10,6 +10,8 @@ import {
 } from '@prowl/db-entities';
 import { TransactionsModule } from './transactions/transactions.module';
 import { PlaidService } from './plaid.service';
+import { LiabilitiesModule } from './liabilities/liabilities.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -66,6 +68,8 @@ import { PlaidService } from './plaid.service';
     TypeOrmModule.forFeature([TransactionCategory]),
     PlaidItemModule,
     TransactionsModule,
+    LiabilitiesModule,
+    WebhookModule,
   ],
   controllers: [],
   providers: [PlaidService],

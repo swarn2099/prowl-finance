@@ -9,6 +9,8 @@ import {
 } from '@prowl/db-entities';
 import { PlaidService } from '../plaid.service';
 import { ConfigService } from '@nestjs/config';
+import { access } from 'fs';
+import { CountryCode } from 'plaid';
 
 @Injectable()
 export class TransactionService {
@@ -44,7 +46,7 @@ export class TransactionService {
         await this.syncPlaidTransactions(access_token, nextCursor);
 
       if (accounts.length > 0) {
-        await this.processAccounts(accounts, uuid);
+        await this.processAccounts(accounts, uuid, access_token);
       }
 
       await this.transactionRepository.manager.transaction(
@@ -80,10 +82,14 @@ export class TransactionService {
     return { response: 'success' };
   }
 
-  private async processAccounts(accounts: any[], uuid: string) {
+  private async processAccounts(
+    accounts: any[],
+    uuid: string,
+    access_token: string
+  ) {
     const missingAccounts = await this.getMissingAccounts(accounts);
     if (missingAccounts.length > 0) {
-      await this.saveMissingAccounts(missingAccounts, uuid);
+      await this.saveMissingAccounts(missingAccounts, uuid, access_token);
     }
   }
 
@@ -262,8 +268,19 @@ export class TransactionService {
 
   private async saveMissingAccounts(
     accounts: any[],
-    uuid: string
+    uuid: string,
+    access_token: string
   ): Promise<any> {
+    // get institution id from item_id
+    const plaidClient = this.plaidService.getClient();
+    const institution = await plaidClient.itemGet({
+      access_token,
+    });
+
+    const response = await plaidClient.institutionsGetById({
+      institution_id: institution.data.item.institution_id,
+      country_codes: [CountryCode.Us],
+    });
     const accountsWithUuid = accounts.map((account) => {
       const {
         available,
@@ -272,6 +289,7 @@ export class TransactionService {
         limit,
         unofficial_currency_code,
       } = account.balances;
+
       return {
         account_id: account.account_id,
         uuid: uuid,
@@ -286,6 +304,8 @@ export class TransactionService {
         persistent_account_id: account.persistent_account_id,
         subtype: account.subtype,
         type: account.type,
+        institution_id: response.data.institution.institution_id,
+        institution_name: response.data.institution.name,
       };
     });
 

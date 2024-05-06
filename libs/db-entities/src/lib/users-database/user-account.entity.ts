@@ -43,7 +43,27 @@ export class PlaidAccount {
   @Column()
   type!: string;
 
-  // @ManyToOne(() => PlaidItem)
-  // @JoinColumn({ name: 'item_id'})
-  // item!: PlaidItem;
+  @Column()
+  institution_id!: string;
+
+  @Column()
+  institution_name!: string;
+
+  @Column({ nullable: true, type: 'float' })
+  last_payment_amount!: number;
+
+  @Column({ nullable: true, type: 'date' })
+  last_payment_date!: string;
+
+  @Column({ nullable: true, type: 'float' })
+  last_statement_balance!: number;
+
+  @Column({ nullable: true, type: 'date' })
+  last_statement_issue_date!: string;
+
+  @Column({ nullable: true, type: 'float' })
+  minimum_payment_amount!: number;
+
+  @Column({ nullable: true, type: 'date' })
+  next_payment_due_date!: string;
 }

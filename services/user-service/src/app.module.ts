@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '@prowl/db-entities';
+import { PlaidAccount, User } from '@prowl/db-entities';
 import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -29,11 +29,13 @@ import { UserGRPCService } from './gRPC/user-gRPC.service';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [User], // Ensure User is listed here
+        entities: [User, PlaidAccount], // Ensure User is listed here
         synchronize: true, // Typically false in production
       }),
     }),
     TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([PlaidAccount]),
+
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {

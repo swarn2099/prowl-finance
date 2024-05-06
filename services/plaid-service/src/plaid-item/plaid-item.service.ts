@@ -40,7 +40,7 @@ export class PlaidItemService {
       await this.plaidItemRepository.save(newUser);
       const saveWebHookUrl = await plaidClient.itemWebhookUpdate({
         access_token,
-        webhook: `https://2e72-68-251-49-18.ngrok-free.app/api/transactions/webhook`,
+        webhook: `https://42d3-68-251-49-18.ngrok-free.app/api/webhook`,
       });
       return {
         message: 'User credentials saved successfully.',

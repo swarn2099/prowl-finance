@@ -9,7 +9,7 @@ import {
   Context,
 } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { User } from '@prowl/api-interfaces';
+import { User, PlaidAccount } from '@prowl/api-interfaces';
 import { GetToken, encrypt } from '@prowl/common';
 
 @Resolver((of) => User)
@@ -17,10 +17,7 @@ export class UserResolver {
   constructor(private userService: UserService) {}
 
   @Query((returns) => User)
-  async getUserById(
-    @GetToken('auth0ID') auth0ID,
-    @Context() context
-  ): Promise<User> {
+  async getUserById(@GetToken('auth0ID') auth0ID): Promise<User> {
     const response: any = await this.userService.findById(auth0ID);
     return response;
   }
@@ -28,6 +25,11 @@ export class UserResolver {
   @Query((returns) => [User])
   async getAllUsers(): Promise<User[]> {
     return this.userService.findAll();
+  }
+
+  @Query((returns) => [PlaidAccount])
+  async getUserAccountsInfo(@GetToken('auth0ID') auth0ID): Promise<any> {
+    return this.userService.getUserAccountInfo(auth0ID);
   }
 
   @Mutation((returns) => User)

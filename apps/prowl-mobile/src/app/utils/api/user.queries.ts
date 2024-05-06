@@ -40,5 +40,34 @@ export const getUserWithTransactions = gql`
         }
       }
     }
+    getUserAccountsInfo {
+      account_id
+      uuid
+      available
+      current
+      iso_currency_code
+      limit
+      unofficial_currency_code
+      mask
+      name
+      official_name
+      persistent_account_id
+      subtype
+      type
+      institution_id
+      institution_name
+      last_payment_amount
+      last_payment_date
+      last_statement_balance
+      last_statement_issue_date
+      minimum_payment_amount
+      next_payment_due_date
+    }
   }
 `;
+
+// export const getUserAccountInfo = gql`
+//   query GetUserAccountsInfo {
+
+//   }
+// `;

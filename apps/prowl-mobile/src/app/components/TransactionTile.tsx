@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import { format, parseISO } from 'date-fns'; // For formatting dates
 import { ProfileStyles as styles } from '../styles/ProfileStyles';
 
 const categoryColors: any = {
@@ -23,8 +22,6 @@ const getShadowStyle = (category: string | number) => ({
 
 export const TransactionTile = ({ item }: any) => {
   const shadowStyle = getShadowStyle(item.personal_finance_category.primary);
-  console.log(item.personal_finance_category_icon_url);
-
   return (
     <View style={[shadowStyle, styles.transactionItem]}>
       <Image
