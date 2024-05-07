@@ -3,17 +3,22 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@shopify/flash-list": "1.6.3",
     "@testing-library/jest-native": "*",
     "@testing-library/react-native": "*",
     "expo": "*",
+    "expo-dev-client": "~3.3.11",
     "metro-config": "*",
     "react-native": "*",
     "react-native-pager-view": "^6.3.1",
     "react-native-svg": "*",
-    "react-native-web": "*"
+    "react-native-web": "*",
+    "react": "18.2.0"
   },
   "scripts": {
     "eas-build-pre-install": "cd ../../ && node tools/scripts/eas-build-pre-install.mjs . apps/prowl-mobile && cp package-lock.json apps/prowl-mobile",
-    "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/prowl-mobile"
+    "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/prowl-mobile",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   }
 }

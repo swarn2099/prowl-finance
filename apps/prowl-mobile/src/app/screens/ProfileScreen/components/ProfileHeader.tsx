@@ -1,8 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import React from 'react';
+import { Image, StyleSheet } from 'react-native';
 
-import { ProfileStyles as styles } from '../styles/ProfileStyles';
-
+import {
+  ThemedText as Text,
+  ThemedView as View,
+} from '../../../components/ThemedComponents';
 export const ProfileHeader = () => {
   return (
     <>
@@ -30,16 +32,46 @@ export const ProfileHeader = () => {
       </View>
       <Text style={styles.name}>Swarn Singh</Text>
       <Text style={styles.bio}>@swarnsingh</Text>
-      {/* <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
-          <Text>Following</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text>Message</Text>
-        </TouchableOpacity>
-      </View> */}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  profilePic: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginRight: 15,
+  },
+  statsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  stat: {
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  name: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginLeft: 10,
+    marginTop: 10,
+  },
+  bio: {
+    fontSize: 14,
+    color: '#333',
+    marginLeft: 10,
+    marginBottom: 10,
+  },
+});
 
 export default ProfileHeader;
