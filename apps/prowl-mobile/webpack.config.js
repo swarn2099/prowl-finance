@@ -6,7 +6,7 @@ const { resolve } = require('path');
  * @deprecated use bundler: 'metro' instead
  */
 module.exports = async function (env, argv) {
-  const config = await createExpoWebpackConfigAsync({ ...env, mode: 'development' }, argv,);
+  const config = await createExpoWebpackConfigAsync({ ...env, mode: 'development', }, argv,);
 
   // Customize the config before returning it.
   // add additional rule to load files under libs

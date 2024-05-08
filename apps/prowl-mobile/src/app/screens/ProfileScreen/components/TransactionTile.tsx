@@ -1,7 +1,15 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, useColorScheme } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  useColorScheme,
+  Touchable,
+  TouchableOpacity,
+} from 'react-native';
 import { formatDate } from '../../../utils/utils';
-import { useTheme } from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
 import { ThemedText } from '../../../components/ThemedComponents';
 
 const categoryColors: any = {
@@ -14,8 +22,10 @@ const categoryColors: any = {
   DEFAULT: '#4682B4', // Grey
 };
 
-export const TransactionTile = ({ item }: any) => {
+export const TransactionTile = ({ item, account }: any) => {
   const { colors } = useTheme();
+  const navigation = useNavigation();
+
   const colorScheme = useColorScheme(); // Detect theme preference
 
   const getShadowStyle = (category: string | number) => ({
@@ -30,34 +40,43 @@ export const TransactionTile = ({ item }: any) => {
   });
   const shadowStyle = getShadowStyle(item.personal_finance_category.primary);
   return (
-    <View
-      style={[
-        shadowStyle,
-        styles.transactionItem,
-        { backgroundColor: colors.card },
-      ]}
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('TransactionDetails', {
+          data: item,
+          account: account,
+        })
+      }
     >
-      <Image
-        style={styles.transactionLogo}
-        source={{
-          uri: item.logo_url || item.personal_finance_category_icon_url,
-        }}
-      />
-      <View style={styles.transactionDetails}>
-        <Text style={styles.merchantName} numberOfLines={1}>
-          {/* {item.name || item.merchant_name || 'Transaction'} */}
-          {item.personal_finance_category.confidence_level === 'LOW'
-            ? item.name
-            : item.merchant_name || 'Transaction'}
-        </Text>
-        <View style={styles.additionalDetails}>
-          <Text style={styles.transactionDate}>{formatDate(item.date)}</Text>
+      <View
+        style={[
+          shadowStyle,
+          styles.transactionItem,
+          { backgroundColor: colors.card },
+        ]}
+      >
+        <Image
+          style={styles.transactionLogo}
+          source={{
+            uri: item.logo_url || item.personal_finance_category_icon_url,
+          }}
+        />
+        <View style={styles.transactionDetails}>
+          <Text style={styles.merchantName} numberOfLines={1}>
+            {/* {item.name || item.merchant_name || 'Transaction'} */}
+            {item.personal_finance_category.confidence_level === 'LOW'
+              ? item.name
+              : item.merchant_name || 'Transaction'}
+          </Text>
+          <View style={styles.additionalDetails}>
+            <Text style={styles.transactionDate}>{formatDate(item.date)}</Text>
+          </View>
+          <ThemedText style={styles.transactionAmount}>
+            ${item.amount.toFixed(2)}
+          </ThemedText>
         </View>
-        <ThemedText style={styles.transactionAmount}>
-          ${item.amount.toFixed(2)}
-        </ThemedText>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

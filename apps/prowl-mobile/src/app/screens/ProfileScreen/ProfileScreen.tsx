@@ -49,7 +49,14 @@ const ProfileScreen = () => {
     </View>
   );
 
-  const renderItem = ({ item }) => <TransactionTile item={item} />;
+  const renderItem = ({ item }) => (
+    <TransactionTile
+      item={item}
+      account={data.getUserAccountsInfo.find(
+        (account) => account.account_id === item.account_id
+      )}
+    />
+  );
 
   if (loading) {
     return (
@@ -57,7 +64,9 @@ const ProfileScreen = () => {
         <Text>Loading...</Text>
       </View>
     );
-  }
+
+    // nx install --save react-native-plaid-link-sdk --packages=prowl-mobile
+  } //nx install prowl-mobile --packages=--save react-native-plaid-link-sdk
 
   if (error) {
     return (
