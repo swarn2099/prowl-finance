@@ -13,6 +13,7 @@ import { ThemeProvider } from './contexts/Themes/ThemeContext';
 import FeedScreen from './screens/FeedScreen/FeedScreen';
 import * as Linking from 'expo-linking';
 import { LinkingOptions } from '@react-navigation/native';
+import PlaidLink from './components/PlaidLink/PlaidLink';
 
 // Define the linking types based on your navigation structure
 type LinkingConfig = LinkingOptions<RootStackParamList>;
@@ -22,19 +23,6 @@ interface RootStackParamList {
   TransactionDetails: undefined; // This could have params, specify them if necessary
 }
 
-const linking: LinkingConfig = {
-  prefixes: ['app://', 'exp://192.168.1.124:8081'],
-  config: {
-    screens: {
-      HomeTabs: {
-        screens: {
-          Home: 'home',
-        },
-      },
-      TransactionDetails: 'transactiondetails', // Example path, adjust if necessary
-    },
-  },
-};
 function SearchScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -115,13 +103,32 @@ function MainStackNavigator() {
   );
 }
 
+const linking: LinkingConfig = {
+  prefixes: [
+    Linking.createURL('/'),
+    'exp://192.168.1.124:19000',
+    'app://',
+    'https://ed1b3cf31c9e.ngrok.app/',
+  ],
+  config: {
+    screens: {
+      HomeTabs: {
+        screens: {
+          Home: 'home',
+        },
+      },
+      TransactionDetails: 'transactiondetails',
+    },
+  },
+};
+
 // Main App component
 export const App = () => {
   const client = new ApolloClient({
     uri: 'https://a790cbff8224.ngrok.app/graphql',
     headers: {
       authorization:
-        'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjZwa0FNazRpM2NpQnowUWlqc0FmeiJ9.eyJuaWNrbmFtZSI6InN3YXJuMjA5OSIsIm5hbWUiOiJzd2FybjIwOTlAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyLzY3NTAyY2FhNWNmM2RmYTgwNmRlODVjNzA1ZGZjNDJmP3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGc3cucG5nIiwidXBkYXRlZF9hdCI6IjIwMjQtMDUtMDhUMDI6MjE6MTQuMjUyWiIsImVtYWlsIjoic3dhcm4yMDk5QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9kZXYteXV5Y2p6Z3MxeWVkbGp1aC51cy5hdXRoMC5jb20vIiwiYXVkIjoiNFhoM0lpeTBYWmgyUmRlcDkzRkhpQTRZSnFiRUJ1NHoiLCJpYXQiOjE3MTUxMzQ4NzQsImV4cCI6MTcxNTE3MDg3NCwic3ViIjoiYXV0aDB8NjYyYzk1MDBlOGNiMDA2ZDk2Mzc1YWRjIiwic2lkIjoiLWRFSUtUY0RLWkEtWkt0dDhfQnl0ajZYUDBFTzloS1AifQ.FSULcnZx8eGVH-UWfO3sXYDI8oP-mRBHm3aHSEc664xf4rCBwVy5p4LQhhHxdhz1uCPcmH8dhwTQNFh2vIaC_8stj0fK2IotN3tL6AeH3MqQ4aFdiEdwurKZp5ujISODwNU5La_Qb8hEHN1XfxjkbyG4iRrgidzZqViuJfiXzyNN5hgYFReq9xBKYTdxABD8K6VWUgJsb6EeDNod9AOX_bakAW53A2gSCHdLMm-detUayi0yVROgdODh_g9KmI3mRlyIj7Ny-ReRYeKkMnNj-z_vrZTaF3pTPuirg4j0DcE1JU327lZbDYjXAiXGw5yf6PQPrzZEJcIlLoa7pbwcAw',
+        'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjZwa0FNazRpM2NpQnowUWlqc0FmeiJ9.eyJuaWNrbmFtZSI6InN3YXJuMjA5OSIsIm5hbWUiOiJzd2FybjIwOTlAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyLzY3NTAyY2FhNWNmM2RmYTgwNmRlODVjNzA1ZGZjNDJmP3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGc3cucG5nIiwidXBkYXRlZF9hdCI6IjIwMjQtMDUtMDhUMTQ6MjQ6MDMuNjA1WiIsImVtYWlsIjoic3dhcm4yMDk5QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9kZXYteXV5Y2p6Z3MxeWVkbGp1aC51cy5hdXRoMC5jb20vIiwiYXVkIjoiNFhoM0lpeTBYWmgyUmRlcDkzRkhpQTRZSnFiRUJ1NHoiLCJpYXQiOjE3MTUxNzgyNDQsImV4cCI6MTcxNTIxNDI0NCwic3ViIjoiYXV0aDB8NjYyYzk1MDBlOGNiMDA2ZDk2Mzc1YWRjIiwic2lkIjoiLWRFSUtUY0RLWkEtWkt0dDhfQnl0ajZYUDBFTzloS1AifQ.VmOcN5YuZvrOeUvqH9PdKlEP_Nk0bPDw7Bq2JABJe-j1Kc3XyAJbf-3FVwwUHs-PQIXTAgvqCvoAqwY29jyKoBz7zzebp4JpF6vGyjNwcb-xOMm576yHU4QPo4fdbXiv-iR7FICd_6z3Njn_3TKPZyse8KLa8YnAIlP8hu08Q4a69Dx3J1vxb5yqTyoXcTkUGK01nL0g-GV8Fv2dbIR9Bx4G30pCMAzGOQrJjRIQMStxfLWEhl5Whj2eghwE2NnIpp3RzqfpOaFUpkjyhTNheTYpGJfu3JqJ7NBK9AKChQjQ0EhWBgcCQsMftVHCdJrg5kOQ022uWv3g_4J2DOvyHg',
     },
     cache: new InMemoryCache(),
   });
