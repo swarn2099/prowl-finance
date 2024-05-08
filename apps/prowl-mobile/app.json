@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "ProwlMobile",
+    "scheme": "app",
     "slug": "prowl-mobile",
     "version": "1.0.0",
     "orientation": "portrait",

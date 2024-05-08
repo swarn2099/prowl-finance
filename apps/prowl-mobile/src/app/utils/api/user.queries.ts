@@ -66,6 +66,12 @@ export const getUserWithTransactions = gql`
   }
 `;
 
+export const getLinkToken = gql`
+  query GetLinkToken {
+    getLinkToken
+  }
+`;
+
 // export const getUserAccountInfo = gql`
 //   query GetUserAccountsInfo {
 

@@ -11,16 +11,30 @@ import { NavigationContainer } from '@react-navigation/native';
 import { MyThemes } from './contexts/Themes/theme';
 import { ThemeProvider } from './contexts/Themes/ThemeContext';
 import FeedScreen from './screens/FeedScreen/FeedScreen';
+import * as Linking from 'expo-linking';
+import { LinkingOptions } from '@react-navigation/native';
 
-// Dummy screen components
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </View>
-  );
+// Define the linking types based on your navigation structure
+type LinkingConfig = LinkingOptions<RootStackParamList>;
+
+interface RootStackParamList {
+  HomeTabs: undefined; // Assuming HomeTabs is a navigator itself
+  TransactionDetails: undefined; // This could have params, specify them if necessary
 }
 
+const linking: LinkingConfig = {
+  prefixes: ['app://', 'exp://192.168.1.124:8081'],
+  config: {
+    screens: {
+      HomeTabs: {
+        screens: {
+          Home: 'home',
+        },
+      },
+      TransactionDetails: 'transactiondetails', // Example path, adjust if necessary
+    },
+  },
+};
 function SearchScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -104,10 +118,10 @@ function MainStackNavigator() {
 // Main App component
 export const App = () => {
   const client = new ApolloClient({
-    uri: 'https://b580-68-251-49-18.ngrok-free.app/graphql',
+    uri: 'https://a790cbff8224.ngrok.app/graphql',
     headers: {
       authorization:
-        'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjZwa0FNazRpM2NpQnowUWlqc0FmeiJ9.eyJuaWNrbmFtZSI6InN3YXJuMjA5OSIsIm5hbWUiOiJzd2FybjIwOTlAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyLzY3NTAyY2FhNWNmM2RmYTgwNmRlODVjNzA1ZGZjNDJmP3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGc3cucG5nIiwidXBkYXRlZF9hdCI6IjIwMjQtMDUtMDdUMTY6MTA6NTIuMjg4WiIsImVtYWlsIjoic3dhcm4yMDk5QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9kZXYteXV5Y2p6Z3MxeWVkbGp1aC51cy5hdXRoMC5jb20vIiwiYXVkIjoiNFhoM0lpeTBYWmgyUmRlcDkzRkhpQTRZSnFiRUJ1NHoiLCJpYXQiOjE3MTUwOTgyNTMsImV4cCI6MTcxNTEzNDI1Mywic3ViIjoiYXV0aDB8NjYyYzk1MDBlOGNiMDA2ZDk2Mzc1YWRjIiwic2lkIjoiLWRFSUtUY0RLWkEtWkt0dDhfQnl0ajZYUDBFTzloS1AifQ.R7rkvx0qbUUuvCYVMI0XvkYE91NpL9acuL9zfLq5Xq9vaGxlaxsaS0FaxAMkRX50irI3BY7IWjbI6sEGY_gnM3aDjcUuyQ2O5WJK1hSWrfWB1dFeOLDDlx5qK7RFAByfBsUOcKz7adk17rDVKpkN-Dx9CfmIrMkRg76VczTsFvU3zFrxGLuuJOHUfyUBdO9_s0yA9oH6jsAObxTdCRlagstSPgO6WnONS8bPN2tnjXU69Sw9vGjV-HFIj-lKPDleZU27g6Vw-NgnA7eKGIEfMw8eJvu7DiVPSuSzcgzeQ9ThpzUQUdQ6x4Vw64OzMV39jjsUE0KG7wuGD_zp-yAXiw',
+        'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjZwa0FNazRpM2NpQnowUWlqc0FmeiJ9.eyJuaWNrbmFtZSI6InN3YXJuMjA5OSIsIm5hbWUiOiJzd2FybjIwOTlAZ21haWwuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyLzY3NTAyY2FhNWNmM2RmYTgwNmRlODVjNzA1ZGZjNDJmP3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGc3cucG5nIiwidXBkYXRlZF9hdCI6IjIwMjQtMDUtMDhUMDI6MjE6MTQuMjUyWiIsImVtYWlsIjoic3dhcm4yMDk5QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9kZXYteXV5Y2p6Z3MxeWVkbGp1aC51cy5hdXRoMC5jb20vIiwiYXVkIjoiNFhoM0lpeTBYWmgyUmRlcDkzRkhpQTRZSnFiRUJ1NHoiLCJpYXQiOjE3MTUxMzQ4NzQsImV4cCI6MTcxNTE3MDg3NCwic3ViIjoiYXV0aDB8NjYyYzk1MDBlOGNiMDA2ZDk2Mzc1YWRjIiwic2lkIjoiLWRFSUtUY0RLWkEtWkt0dDhfQnl0ajZYUDBFTzloS1AifQ.FSULcnZx8eGVH-UWfO3sXYDI8oP-mRBHm3aHSEc664xf4rCBwVy5p4LQhhHxdhz1uCPcmH8dhwTQNFh2vIaC_8stj0fK2IotN3tL6AeH3MqQ4aFdiEdwurKZp5ujISODwNU5La_Qb8hEHN1XfxjkbyG4iRrgidzZqViuJfiXzyNN5hgYFReq9xBKYTdxABD8K6VWUgJsb6EeDNod9AOX_bakAW53A2gSCHdLMm-detUayi0yVROgdODh_g9KmI3mRlyIj7Ny-ReRYeKkMnNj-z_vrZTaF3pTPuirg4j0DcE1JU327lZbDYjXAiXGw5yf6PQPrzZEJcIlLoa7pbwcAw',
     },
     cache: new InMemoryCache(),
   });
@@ -118,7 +132,7 @@ export const App = () => {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
-        <NavigationContainer theme={theme}>
+        <NavigationContainer theme={theme} linking={linking}>
           <MainStackNavigator />
         </NavigationContainer>
       </ThemeProvider>

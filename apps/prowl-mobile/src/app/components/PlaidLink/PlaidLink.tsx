@@ -1,88 +1,50 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import React, { useRef } from 'react';
+// PlaidLink.tsx
+import React, { useEffect, useRef } from 'react';
 import { WebView } from 'react-native-webview';
+import { Button, StyleSheet, View } from 'react-native';
 import queryString from 'query-string';
 import { LinkErrorCode, LinkErrorType, LinkExitMetadataStatus } from './const';
 import Constants from 'expo-constants';
+import * as Linking from 'expo-linking';
 
 export default function PlaidLink({
   linkToken,
   onEvent,
   onExit,
   onSuccess,
+  setShowPlaidLink,
 }: {
   linkToken: string;
   onEvent: Function;
   onExit: Function;
   onSuccess: Function;
+  setShowPlaidLink?: (show: boolean) => void;
 }) {
-  let webviewRef = useRef();
+  const webviewRef = useRef<WebView>(null);
 
   const handleNavigationStateChange = (event: { url: string }) => {
+    console.log('Navigating to URL: ', event.url);
     if (event.url.startsWith('plaidlink://')) {
       const eventParams = queryString.parse(event.url.replace(/.*\?/, ''));
 
-      const linkSessionId = eventParams.link_session_id;
-      const mfaType = eventParams.mfa_type;
-      const requestId = eventParams.request_id;
-      const viewName = eventParams.view_name;
-      const errorCode = eventParams.error_code;
-      const errorMessage = eventParams.error_message;
-      const errorType = eventParams.error_type;
-      const exitStatus = eventParams.exist_status;
-      const institutionId = eventParams.institution_id;
-      const institutionName = eventParams.institution_name;
-      const institutionSearchQuery = eventParams.institution_search_query;
-      const timestamp = eventParams.timestamp;
-
       if (event.url.startsWith('plaidlink://event') && onEvent) {
         onEvent({
-          eventName: eventParams.event_name,
-          metadata: {
-            linkSessionId,
-            mfaType,
-            requestId,
-            viewName,
-            errorCode,
-            errorMessage,
-            errorType,
-            exitStatus,
-            institutionId,
-            institutionName,
-            institutionSearchQuery,
-            timestamp,
-          },
+          eventName: eventParams['event_name'],
+          metadata: eventParams,
         });
       } else if (event.url.startsWith('plaidlink://exit') && onExit) {
         onExit({
           error: {
-            errorCode: LinkErrorCode[errorCode],
-            errorMessage: eventParams.error_message,
-            errorType: LinkErrorType[errorType],
+            errorCode: LinkErrorCode[eventParams['error_code']],
+            errorMessage: eventParams['error_message'],
+            errorType: LinkErrorType[eventParams['error_type']],
           },
-          metadata: {
-            status: LinkExitMetadataStatus[exitStatus],
-            institution: {
-              id: institutionId,
-              name: institutionName,
-            },
-            linkSessionId,
-            requestId,
-          },
+          metadata: eventParams,
         });
       } else if (event.url.startsWith('plaidlink://connected') && onSuccess) {
-        const publicToken = eventParams.public_token;
-        const accounts = JSON.parse(eventParams.accounts);
         onSuccess({
-          publicToken,
-          metadata: {
-            institution: {
-              id: institutionId,
-              name: institutionName,
-            },
-            accounts,
-            linkSessionId,
-          },
+          publicToken: eventParams['public_token'],
+          metadata: eventParams,
         });
       }
       return false;
@@ -90,19 +52,55 @@ export default function PlaidLink({
     return true;
   };
 
-  console.log('linkToken', linkToken);
+  const handleClose = () => {
+    if (setShowPlaidLink) {
+      setShowPlaidLink(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleDeepLink = (event) => {
+      console.log('Deep Link URL: ', event.url);
+    };
+
+    Linking.addEventListener('url', handleDeepLink);
+    return () => {
+      Linking.removeEventListener('url', handleDeepLink);
+    };
+  }, []);
+
   return (
-    <WebView
-      source={{
-        uri: `https://cdn.plaid.com/link/v2/stable/link.html?isWebview=true&token=${linkToken}`,
-      }}
-      style={{
-        flex: 1,
-      }}
-      ref={(ref) => (webviewRef = ref)}
-      onError={() => webviewRef.reload()}
-      originWhitelist={['*']}
-      onShouldStartLoadWithRequest={handleNavigationStateChange}
-    />
+    <View style={styles.container}>
+      <WebView
+        source={{
+          uri: `https://cdn.plaid.com/link/v2/stable/link.html?token=${linkToken}&env=sandbox&redirect_url=${encodeURIComponent(
+            'https://ed1b3cf31c9e.ngrok.app/src/plaid-redirect.html'
+          )}`,
+        }}
+        ref={webviewRef}
+        onError={() => webviewRef.current?.reload()}
+        originWhitelist={['*', 'http://*', 'https://*', 'plaidlink://*']} // To allow all URLs
+        onShouldStartLoadWithRequest={handleNavigationStateChange}
+        style={styles.webview}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: Constants.statusBarHeight,
+  },
+  webview: {
+    flex: 1,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    padding: 8,
+    fontSize: 16,
+    color: 'red',
+  },
+});
