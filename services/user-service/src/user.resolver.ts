@@ -11,10 +11,15 @@ import {
 import { UserService } from './user.service';
 import { User, PlaidAccount } from '@prowl/api-interfaces';
 import { GetToken, encrypt } from '@prowl/common';
+import { UserGRPCService } from './gRPC/user-gRPC.service';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @Resolver((of) => User)
 export class UserResolver {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private usergRPCService: UserGRPCService
+  ) {}
 
   @Query((returns) => User)
   async getUserById(@GetToken('auth0ID') auth0ID): Promise<User> {
@@ -50,5 +55,19 @@ export class UserResolver {
   @Mutation((returns) => User)
   async deleteUser(@Args('uuid') uuid: string): Promise<User> {
     return this.userService.remove(uuid);
+  }
+
+  // gRPC to Plaid Service
+  @Query((returns) => GraphQLJSONObject)
+  async getLinkToken(@GetToken('auth0ID') auth0ID): Promise<any> {
+    return this.usergRPCService.getLinkToken(auth0ID);
+  }
+
+  @Mutation((returns) => GraphQLJSONObject)
+  async sendPlaidDetails(
+    @GetToken('auth0ID') auth0ID: string,
+    @Args('public_access_token') public_access_token: string
+  ): Promise<any> {
+    return this.usergRPCService.sendUserDetails(auth0ID, public_access_token);
   }
 }

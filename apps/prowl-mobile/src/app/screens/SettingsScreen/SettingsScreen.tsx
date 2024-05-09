@@ -8,6 +8,7 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
+import { useAuth0 } from 'react-native-auth0';
 
 export const SettingsScreen = () => {
   const [username, setUsername] = useState('john_doe');
@@ -21,6 +22,12 @@ export const SettingsScreen = () => {
   // Dummy function to handle updating account settings
   const updateSettings = () => {
     console.log('Settings updated:', { username, password });
+  };
+
+  const { clearSession, user } = useAuth0();
+
+  const logout = async () => {
+    await clearSession();
   };
 
   return (
@@ -51,7 +58,7 @@ export const SettingsScreen = () => {
       </View>
 
       <View style={styles.section}>
-        <Button title="Update Settings" onPress={updateSettings} />
+        <Button title="Logout" onPress={logout} />
       </View>
     </ScrollView>
   );

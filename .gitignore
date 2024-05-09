@@ -55,3 +55,6 @@ npm-debug.*
 web-build/
 cache/
 
+apps/prowl-mobile/ios
+apps/prowl-mobile/android
+

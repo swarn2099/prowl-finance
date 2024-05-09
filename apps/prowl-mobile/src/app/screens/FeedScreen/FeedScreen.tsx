@@ -9,7 +9,6 @@ import {
 import WebView from 'react-native-webview';
 import * as Linking from 'expo-linking';
 import queryString from 'query-string';
-import { useAuth0 } from 'react-native-auth0';
 
 export const FeedScreen = () => {
   const [showPlaidLink, setShowPlaidLink] = useState(false);
@@ -23,25 +22,14 @@ export const FeedScreen = () => {
   ] = useMutation(sendPlaidPublicToken);
 
   const startPlaidLink = useCallback(() => {
+    console.log('startPlaidLink');
     getLinkTokenQuery();
     setShowPlaidLink(true);
   }, [getLinkTokenQuery]);
 
   const webviewRef: any = useRef<WebView>(null);
   const plaidUri = `https://cdn.plaid.com/link/v2/stable/link.html?isWebview=true&token=${data?.getLinkToken.linkToken}`;
-  const PLAID_OAUTH_PATH = 'app/home';
-  const { user, getCredentials } = useAuth0();
-
-  const fetchCredentials = async () => {
-    try {
-      const credentials = await getCredentials();
-      console.log('Access Token:', credentials.accessToken);
-      console.log('ID Token:', credentials.idToken);
-      console.log('Full Credentials:', credentials);
-    } catch (error) {
-      console.error('Failed to retrieve credentials:', error);
-    }
-  };
+  const PLAID_OAUTH_PATH = '--/app/home';
 
   useEffect(() => {
     // console.log('User: ', user, fetchCredentials());
@@ -97,6 +85,7 @@ export const FeedScreen = () => {
         console.log('institution_name', institution_name);
         console.log('link_session_id', link_session_id);
         console.log('public_token', public_token);
+        console.log('eventParams', eventParams);
 
         // exchange public token and save plaid-user
         sendPublicToken({ variables: { public_access_token: public_token } });

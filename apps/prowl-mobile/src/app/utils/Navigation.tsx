@@ -45,6 +45,9 @@ export const NavigationComponent = () => {
           tabBarStyle: {
             backgroundColor: colorScheme === 'dark' ? '#000' : '#ffff',
           },
+          headerStyle: {
+            backgroundColor: colorScheme === 'dark' ? '#000' : '#ffff',
+          },
         })}
       >
         <Tab.Screen name="Home" component={FeedScreen} />

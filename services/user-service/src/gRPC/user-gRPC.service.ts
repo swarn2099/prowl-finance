@@ -43,4 +43,22 @@ export class UserGRPCService implements OnModuleInit {
       });
     });
   }
+
+  async getLinkToken(auth0ID: string): Promise<{ message: string }> {
+    return new Promise((resolve, reject) => {
+      const response = this.plaidService.GetLinkToken({
+        auth0ID,
+      });
+      response.subscribe({
+        next: (data) => {
+          console.log('Response from Plaid service:', data);
+          resolve(data);
+        },
+        error: (error) => {
+          console.error('Error from Plaid service:', error);
+          reject(error);
+        },
+      });
+    });
+  }
 }

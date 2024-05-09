@@ -77,12 +77,3 @@ export const sendPlaidPublicToken = gql`
     sendPlaidDetails(public_access_token: $public_access_token)
   }
 `;
-
-// const ADD_TODO = gql`
-//   mutation AddTodo($type: String!) {
-//     addTodo(type: $type) {
-//       id
-//       type
-//     }
-//   }
-// `;

@@ -6,6 +6,8 @@ package userplaid;
 service UserPlaidService {
   // Sends a UUID to the Plaid Service
   rpc SendUserDetails (UserDetailsRequest) returns (UserDetailsResponse) {}
+  rpc GetLinkToken (UserDetailsRequest) returns (LinkTokenResponse) {}
+
 }
 
 // The request message containing user details.
@@ -19,4 +21,16 @@ message UserDetailsRequest {
 message UserDetailsResponse {
   string status = 1;
   string message = 2;
+}
+
+// The request message containing the user details.
+message LinkTokenRequest {
+  string auth0ID = 1;
+}
+
+// The response message containing the response status.
+message LinkTokenResponse {
+  string expiration = 1;
+  string link_token = 2;
+  string request_id = 3;
 }

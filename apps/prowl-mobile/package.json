@@ -9,11 +9,11 @@
     "expo": "*",
     "expo-dev-client": "~3.3.11",
     "metro-config": "*",
-    "react-native": "*",
-    "react-native-pager-view": "^6.3.1",
-    "react-native-svg": "*",
-    "react-native-web": "*",
-    "react": "18.2.0"
+    "react": "18.2.0",
+    "react-native": "0.73.6",
+    "react-native-pager-view": "6.2.3",
+    "react-native-svg": "14.1.0",
+    "react-native-web": "*"
   },
   "scripts": {
     "eas-build-pre-install": "cd ../../ && node tools/scripts/eas-build-pre-install.mjs . apps/prowl-mobile && cp package-lock.json apps/prowl-mobile",

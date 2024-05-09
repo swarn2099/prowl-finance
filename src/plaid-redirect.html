@@ -11,7 +11,7 @@
     <script>
       function redirectToApp() {
         var openURL = window.location.search + window.location.hash;
-        const deeplinkBase = 'exp://192.168.1.124:8081/--/app/'; // Use your actual development server IP and port
+        const deeplinkBase = 'app://192.168.1.124:8081/--/app/'; // Use your actual development server IP and port
         // Construct the path defined in your navigation configuration
         const deeplinkPath = 'home'; // Make sure 'home' is a defined path in your Expo configuration
         window.location.replace(`${deeplinkBase}${deeplinkPath}${openURL}`);

@@ -19,7 +19,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.prowlmobile.app",
-      "associatedDomains": ["applinks:https://ed1b3cf31c9e.ngrok.app/"]
+      "associatedDomains": ["applinks:https://ed1b3cf31c9e.ngrok.app/"],
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": ["exp"]
+      }
     },
     "android": {
       "adaptiveIcon": {

@@ -49,10 +49,17 @@ type Query {
   getUserById: User!
   getAllUsers: [User!]!
   getUserAccountsInfo: [PlaidAccount!]!
+  getLinkToken: JSONObject!
 }
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
 
 type Mutation {
   createUser: User!
   updateUser(uuid: String!, email: String!, name: String!): User!
   deleteUser(uuid: String!): User!
+  sendPlaidDetails(public_access_token: String!): JSONObject!
 }

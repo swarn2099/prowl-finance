@@ -9,7 +9,6 @@ import { useAuth } from './contexts/AuthContext'; // Make sure this path is corr
 import { createApolloClient } from './utils/api/apolloSetup'; // We will create this function
 
 export const App = () => {
-  const accessToken = '123'; // Now it will work because it's inside the provider
   const client = createApolloClient(); // Pass accessToken to a function that creates Apollo Client
 
   const colorScheme = useColorScheme();
@@ -17,11 +16,9 @@ export const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider theme={theme}>
-        <NavigationContainer>
-          <NavigationComponent />
-        </NavigationContainer>
-      </ThemeProvider>
+      <NavigationContainer theme={theme}>
+        <NavigationComponent />
+      </NavigationContainer>
     </ApolloProvider>
   );
 };

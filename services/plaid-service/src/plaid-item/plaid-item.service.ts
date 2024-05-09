@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { PlaidItem } from '@prowl/db-entities';
 import { PlaidService } from '../plaid.service';
 import { access } from 'fs';
+import { CountryCode, Products } from 'plaid';
 
 @Injectable()
 export class PlaidItemService {
@@ -19,6 +20,7 @@ export class PlaidItemService {
     auth0ID: string,
     publicAccessToken: string
   ): Promise<any> {
+    console.log('Received user details:', uuid, auth0ID, publicAccessToken);
     const plaidClient = this.plaidService.getClient();
 
     // first exchange the public token for an access token
@@ -36,12 +38,9 @@ export class PlaidItemService {
       access_token,
     });
 
+    console.log('New user:', newUser);
     try {
       await this.plaidItemRepository.save(newUser);
-      const saveWebHookUrl = await plaidClient.itemWebhookUpdate({
-        access_token,
-        webhook: `https://42d3-68-251-49-18.ngrok-free.app/api/webhook`,
-      });
       return {
         message: 'User credentials saved successfully.',
         status: 200,
@@ -51,6 +50,66 @@ export class PlaidItemService {
         message: error.message,
         status: 500,
       };
+    }
+  }
+
+  async generateLinkToken(auth0ID: string): Promise<any> {
+    console.log('Received user details:', auth0ID);
+    try {
+      const plaidClient = this.plaidService.getClient();
+      const response = await plaidClient.linkTokenCreate({
+        user: {
+          client_user_id: auth0ID,
+        },
+        client_name: 'Prowl Finance',
+        products: [Products.Transactions, Products.Liabilities],
+        country_codes: [CountryCode.Us],
+        language: 'en',
+        webhook: 'https://250269dd73ab.ngrok.app/api/webhook',
+        redirect_uri: 'https://ed1b3cf31c9e.ngrok.app/src/plaid-redirect.html',
+      });
+
+      const linkResponse = {
+        expiration: response.data.expiration,
+        linkToken: response.data.link_token,
+        requestId: response.data.request_id,
+      };
+
+      console.log('Link response:', linkResponse);
+
+      return linkResponse;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async generateUpdateLinkToken(auth0ID: string): Promise<any> {
+    console.log('Received user details:', auth0ID);
+    try {
+      const plaidClient = this.plaidService.getClient();
+      const response = await plaidClient.linkTokenCreate({
+        user: {
+          client_user_id: auth0ID,
+        },
+        client_name: 'Prowl Finance',
+        products: [Products.Transactions, Products.Liabilities],
+        country_codes: [CountryCode.Us],
+        language: 'en',
+        redirect_uri: 'https://ed1b3cf31c9e.ngrok.app/src/plaid-redirect.html',
+        access_token: '',
+      });
+
+      const linkResponse = {
+        expiration: response.data.expiration,
+        linkToken: response.data.link_token,
+        requestId: response.data.request_id,
+      };
+
+      console.log('Link response:', linkResponse);
+
+      return linkResponse;
+    } catch (error) {
+      return error;
     }
   }
 }
