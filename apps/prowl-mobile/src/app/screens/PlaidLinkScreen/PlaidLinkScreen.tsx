@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {
@@ -9,9 +9,9 @@ import {
 import WebView from 'react-native-webview';
 import * as Linking from 'expo-linking';
 import queryString from 'query-string';
-import { useAuth0 } from 'react-native-auth0';
 
-export const FeedScreen = () => {
+export const PlaidLinkScreen = () => {
+  const navigation = useNavigation();
   const [showPlaidLink, setShowPlaidLink] = useState(false);
 
   const [getLinkTokenQuery, { loading, error, data }] =
@@ -27,30 +27,31 @@ export const FeedScreen = () => {
     setShowPlaidLink(true);
   }, [getLinkTokenQuery]);
 
+  const handleSendToken = async (publicAccessToken: string) => {
+    await sendPublicToken({
+      variables: { public_access_token: publicAccessToken },
+    });
+  };
+  useEffect(() => {
+    if (sendPlaidPublicTokenResponse) {
+      console.log('Success:', sendPlaidPublicTokenResponse);
+      navigation.goBack();
+      // Additional success logic here
+    }
+    if (sendPlaidPublicTokenError) {
+      console.error('Error:', sendPlaidPublicTokenError.message);
+      // Additional error logic here
+    }
+  }, [sendPlaidPublicTokenResponse, sendPlaidPublicTokenError]);
+
   const webviewRef: any = useRef<WebView>(null);
   const plaidUri = `https://cdn.plaid.com/link/v2/stable/link.html?isWebview=true&token=${data?.getLinkToken.linkToken}`;
   const PLAID_OAUTH_PATH = 'app/home';
-  const { user, getCredentials } = useAuth0();
-
-  const fetchCredentials = async () => {
-    try {
-      const credentials = await getCredentials();
-      console.log('Access Token:', credentials.accessToken);
-      console.log('ID Token:', credentials.idToken);
-      console.log('Full Credentials:', credentials);
-    } catch (error) {
-      console.error('Failed to retrieve credentials:', error);
-    }
-  };
 
   useEffect(() => {
-    // console.log('User: ', user, fetchCredentials());
     // Listens for when our app is deeplinked to
     const handler: Linking.URLListener = ({ url }) => {
       const { path } = Linking.parse(url);
-
-      console.log('PATHTHTHTH Received deeplink:', url, path);
-
       if (path === PLAID_OAUTH_PATH) {
         webviewRef.current?.injectJavaScript?.(
           `window.open('${plaidUri}&receivedRedirectUri=${encodeURIComponent(
@@ -61,16 +62,8 @@ export const FeedScreen = () => {
     };
 
     Linking.addEventListener('url', handler);
-
-    return () => {
-      // Linking.removeEventListener('url', handler);
-    };
+    // return () => Linking.removeEventListener('url', handler);
   }, [plaidUri]);
-
-  useEffect(() => {
-    console.log('sendPlaidPublicTokenResponse', sendPlaidPublicTokenResponse);
-    console.log('sendPlaidPublicTokenError', sendPlaidPublicTokenError);
-  }, [sendPlaidPublicTokenResponse, sendPlaidPublicTokenError]);
 
   const injectedJavaScript = `(function() {
     window.postMessage = function(data) {
@@ -81,25 +74,25 @@ export const FeedScreen = () => {
   const navigationRedirect = (event: any) => {
     if (event.url && event.url.startsWith('plaidlink://')) {
       const eventParams: any = queryString.parse(event.url.replace(/.*\?/, ''));
-      // console.log('eventParams', eventParams);
       const { link_session_id, institution_id, institution_name } = eventParams;
 
       if (event.url.startsWith('plaidlink://exit')) {
         // handle plaid exit here, for example go back on navigation.
+        setShowPlaidLink(false);
         console.log('plaid exit!');
       } else if (event.url.startsWith('plaidlink://connected')) {
         // handle connect successfully here
         const { public_token } = eventParams;
-        const accounts = JSON.parse(eventParams.accounts);
-        console.log('plaid connect!');
-        console.log('account_id', accounts[0]['_id']);
-        console.log('institution_id', institution_id);
-        console.log('institution_name', institution_name);
-        console.log('link_session_id', link_session_id);
-        console.log('public_token', public_token);
-
+        // const accounts = JSON.parse(eventParams.accounts);
+        // console.log('plaid connect!');
+        // console.log('account_id', accounts[0]['_id']);
+        // console.log('institution_id', institution_id);
+        // console.log('institution_name', institution_name);
+        // console.log('link_session_id', link_session_id);
+        // console.log('public_token', public_token);
         // exchange public token and save plaid-user
-        sendPublicToken({ variables: { public_access_token: public_token } });
+        // sendPublicToken({ variables: { public_access_token: public_token } });
+        handleSendToken(public_token);
       }
       return false;
     }
@@ -115,25 +108,29 @@ export const FeedScreen = () => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Button title="Connect Bank Account" onPress={startPlaidLink} />
-      {showPlaidLink && data?.getLinkToken.linkToken && (
-        <WebView
-          ref={webviewRef}
-          source={{ uri: plaidUri }}
-          injectedJavaScript={injectedJavaScript}
-          originWhitelist={['http://*', 'https://*', 'plaidlink://*']}
-          onShouldStartLoadWithRequest={navigationRedirect}
-          onNavigationStateChange={navigationRedirect}
-          setSupportMultipleWindows={false}
-          onError={(error) => {
-            console.error('WebView error:', error.nativeEvent);
-            webviewRef.current.goBack();
-          }}
-        />
-      )}
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
+        {showPlaidLink === false ? (
+          <Button title="Connect Bank Account" onPress={startPlaidLink} />
+        ) : null}
+        {showPlaidLink && data?.getLinkToken.linkToken && (
+          <WebView
+            ref={webviewRef}
+            source={{ uri: plaidUri }}
+            injectedJavaScript={injectedJavaScript}
+            originWhitelist={['http://*', 'https://*', 'plaidlink://*']}
+            onShouldStartLoadWithRequest={navigationRedirect}
+            onNavigationStateChange={navigationRedirect}
+            setSupportMultipleWindows={false}
+            onError={(error) => {
+              console.error('WebView error:', error.nativeEvent);
+              webviewRef.current.goBack();
+            }}
+          />
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
-export default FeedScreen;
+export default PlaidLinkScreen;

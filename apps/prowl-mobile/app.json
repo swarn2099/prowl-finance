@@ -32,7 +32,14 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [],
+    "plugins": [
+      [
+        "react-native-auth0",
+        {
+          "domain": "dev-yuycjzgs1yedljuh.us.auth0.com"
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "d1984449-c07b-46c2-b67d-381f80a9bbda"

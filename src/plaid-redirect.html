@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <p class="text">Please wait while we redirect you to MYAPP again...</p>
+    <p class="text"><a href="javascript:redirectToApp()">Open MYAPP</a></p>
+    <script>
+      function redirectToApp() {
+        var openURL = window.location.search + window.location.hash;
+        const deeplinkBase = 'exp://192.168.1.124:8081/--/app/'; // Use your actual development server IP and port
+        // Construct the path defined in your navigation configuration
+        const deeplinkPath = 'home'; // Make sure 'home' is a defined path in your Expo configuration
+        window.location.replace(`${deeplinkBase}${deeplinkPath}${openURL}`);
+      }
+      window.onload = redirectToApp;
+    </script>
+    <!-- <script>
+        var redirectToApp = function() {
+          var openURL = window.location.search + window.location.hash;
+          window.location.replace(`yourapp://--/oauth${openURL}`);
+        }
+        window.onload = redirectToApp;
+      </script> -->
+  </body>
+</html>
