@@ -3,7 +3,7 @@
     "name": "@prowl/source",
     "slug": "@prowlsource",
     "version": "0.0.0",
-    "sdkVersion": "50.0.0",
+    "sdkVersion": "51.0.0",
     "platforms": [
       "ios",
       "android",

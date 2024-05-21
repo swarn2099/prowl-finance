@@ -105,3 +105,31 @@ export class Transaction {
   @Directive('@shareable')
   lastModified!: Date;
 }
+
+@ObjectType()
+@Directive('@shareable')
+export class TransactionEdge {
+  @Field(() => ID)
+  cursor!: string;
+
+  @Field(() => Transaction)
+  node!: Transaction;
+}
+@ObjectType()
+@Directive('@shareable')
+export class PageInfo {
+  @Field(() => String, { nullable: true })
+  endCursor!: string | null;
+
+  @Field()
+  hasNextPage!: boolean;
+}
+@ObjectType()
+@Directive('@shareable')
+export class TransactionConnection {
+  @Field(() => [TransactionEdge])
+  edges!: TransactionEdge[];
+
+  @Field(() => PageInfo)
+  pageInfo!: PageInfo;
+}

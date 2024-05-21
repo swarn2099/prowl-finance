@@ -1,93 +1,83 @@
-import { createStackNavigator } from '@react-navigation/stack';
+// Navigation.tsx
 import React from 'react';
-import { useColorScheme } from 'react-native';
-import PlaidLinkScreen from '../screens/PlaidLinkScreen/PlaidLinkScreen';
-import SettingsScreen from '../screens/SettingsScreen/SettingsScreen';
-import TransactionScreen from '../screens/TransactionScreen/TransactionScreen';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { useColorScheme } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 import FeedScreen from '../screens/FeedScreen/FeedScreen';
 import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
+import SettingsScreen from '../screens/SettingsScreen/SettingsScreen';
+import PlaidLinkScreen from '../screens/PlaidLinkScreen/PlaidLinkScreen';
+import TransactionScreen from '../screens/TransactionScreen/TransactionScreen';
+import WalletScreen from '../screens/WalletScreen/WalletScreen';
 import AuthScreen from '../screens/AuthScreen.tsx/AuthScreen';
-import { useAuth0 } from 'react-native-auth0';
+import { useNavigation } from '@react-navigation/native';
 
-export const NavigationComponent = () => {
-  const Tab = createBottomTabNavigator();
-  const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-  const BottomTabs = () => {
-    const navigation = useNavigation();
-    const colorScheme = useColorScheme(); // Detect theme preference
-    return (
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-            if (route.name === 'Home') {
-              iconName = 'home';
-            } else if (route.name === 'Search') {
-              iconName = 'car';
-            } else if (route.name === 'Notifications') {
-              iconName = 'book';
-            } else if (route.name === 'Profile') {
-              iconName = 'person';
-            }
+const BottomTabs = () => {
+  const navigation = useNavigation();
+  const colorScheme = useColorScheme();
 
-            return (
-              <Ionicons name={iconName as any} size={size} color={color} />
-            );
-          },
-          tabBarLabel: () => null, // This hides the label
-          tabBarActiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
-          tabBarInactiveTintColor: 'gray',
-          headerShadowVisible: false, // Applied here
-          tabBarStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#000' : '#ffff',
-          },
-          headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#000' : '#ffff',
-          },
-        })}
-      >
-        <Tab.Screen name="Home" component={FeedScreen} />
-        <Tab.Screen name="Search" component={FeedScreen} />
-        <Tab.Screen name="Notifications" component={FeedScreen} />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            headerRightContainerStyle: {
-              paddingRight: 10,
-            },
-            headerRight: () => (
-              <Ionicons
-                onPress={() => navigation.navigate('SettingsScreen')}
-                name="settings"
-                size={24}
-                color={colorScheme === 'dark' ? '#fff' : '#000'}
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let icon;
+          if (route.name === 'Home') {
+            icon = <Ionicons name="home" size={size} color={color} />;
+          } else if (route.name === 'Wallet') {
+            icon = (
+              <FontAwesome6
+                name="money-bill-transfer"
+                size={size}
+                color={color}
               />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    );
-  };
+            );
+          } else if (route.name === 'Profile') {
+            icon = <Ionicons name="person" size={size} color={color} />;
+          }
 
-  const colorScheme = useColorScheme(); // Detect theme preference
+          return icon;
+        },
+        tabBarLabel: () => null,
+        tabBarActiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          backgroundColor: colorScheme === 'dark' ? '#000' : '#ffff',
+        },
+        headerStyle: {
+          backgroundColor: colorScheme === 'dark' ? '#000' : '#ffff',
+        },
+      })}
+    >
+      <Tab.Screen name="Home" component={FeedScreen} />
+      <Tab.Screen name="Wallet" component={WalletScreen} />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerRightContainerStyle: {
+            paddingRight: 10,
+          },
+          headerRight: () => (
+            <Ionicons
+              onPress={() => navigation.navigate('SettingsScreen')}
+              name="settings"
+              size={24}
+              color={colorScheme === 'dark' ? '#fff' : '#000'}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
-  const { authorize, clearSession, user, error, isLoading } = useAuth0();
-  const loggedIn = user !== undefined && user !== null;
-
-  if (!loggedIn) {
-    return (
-      <NavigationContainer independent={true}>
-        <Stack.Navigator>
-          <Stack.Screen name="AuthScreen" component={AuthScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
+const AppNavigator = () => {
+  const colorScheme = useColorScheme();
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -96,13 +86,12 @@ export const NavigationComponent = () => {
         name="TransactionDetails"
         component={TransactionScreen}
         options={{
-          headerShown: true, // Enable the header only for this screen
-          headerTitle: 'Transaction Details', // Optional: set a title or use the default
-          headerBackTitleVisible: false, // Optional: hides the back button title (iOS)
-          headerTintColor: colorScheme === 'dark' ? '#fff' : '#000', // Optional: set the color of the back button and title
-          headerShadowVisible: false, // Optional: hides the shadow below the header
+          headerShown: true,
+          headerTitle: 'Transaction Details',
+          headerBackTitleVisible: false,
+          headerTintColor: colorScheme === 'dark' ? '#fff' : '#000',
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#000' : '#fff', // Optional: styles the background of the header
+            backgroundColor: colorScheme === 'dark' ? '#000' : '#fff',
           },
         }}
       />
@@ -110,13 +99,12 @@ export const NavigationComponent = () => {
         name="PlaidLinkScreen"
         component={PlaidLinkScreen}
         options={{
-          headerShown: true, // Enable the header only for this screen
-          headerTitle: 'Link your Accounts', // Optional: set a title or use the default
-          headerBackTitleVisible: false, // Optional: hides the back button title (iOS)
-          headerTintColor: colorScheme === 'dark' ? '#fff' : '#000', // Optional: set the color of the back button and title
-          headerShadowVisible: false, // Optional: hides the shadow below the header
+          headerShown: true,
+          headerTitle: 'Link your Accounts',
+          headerBackTitleVisible: false,
+          headerTintColor: colorScheme === 'dark' ? '#fff' : '#000',
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#000' : '#fff', // Optional: styles the background of the header
+            backgroundColor: colorScheme === 'dark' ? '#000' : '#fff',
           },
         }}
       />
@@ -124,13 +112,12 @@ export const NavigationComponent = () => {
         name="SettingsScreen"
         component={SettingsScreen}
         options={{
-          headerShown: true, // Enable the header only for this screen
-          headerTitle: 'Settings', // Optional: set a title or use the default
-          headerBackTitleVisible: false, // Optional: hides the back button title (iOS)
-          headerTintColor: colorScheme === 'dark' ? '#fff' : '#000', // Optional: set the color of the back button and title
-          headerShadowVisible: false, // Optional: hides the shadow below the header
+          headerShown: true,
+          headerTitle: 'Settings',
+          headerBackTitleVisible: false,
+          headerTintColor: colorScheme === 'dark' ? '#fff' : '#000',
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#000' : '#fff', // Optional: styles the background of the header
+            backgroundColor: colorScheme === 'dark' ? '#000' : '#fff',
           },
         }}
       />
@@ -138,4 +125,10 @@ export const NavigationComponent = () => {
   );
 };
 
-export default NavigationComponent;
+const AuthNavigator = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="AuthScreen" component={AuthScreen} />
+  </Stack.Navigator>
+);
+
+export { AppNavigator, AuthNavigator };

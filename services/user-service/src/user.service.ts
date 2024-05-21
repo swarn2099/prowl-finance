@@ -44,14 +44,28 @@ export class UserService {
     return response ? response : undefined;
   }
 
-  async create(auth0ID: string, email: string, name: string): Promise<User> {
+  async create(
+    auth0ID: string,
+    email: string,
+    name: string,
+    firstName: string,
+    lastName: string,
+    username: string
+  ): Promise<User> {
     // first check if user exists, if so return user with message saying user already exists
     const user = await this.userRepository.findOneBy({ auth0ID });
     if (user) {
       return this.maskUUID(user);
     }
 
-    const newUser = this.userRepository.create({ auth0ID, email, name });
+    const newUser = this.userRepository.create({
+      auth0ID,
+      email,
+      name,
+      firstName,
+      lastName,
+      username,
+    });
     await this.userRepository.save(newUser);
     return this.maskUUID(newUser);
   }

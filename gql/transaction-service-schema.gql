@@ -47,9 +47,24 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+type TransactionEdge {
+  cursor: ID!
+  node: Transaction!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type TransactionConnection {
+  edges: [TransactionEdge!]!
+  pageInfo: PageInfo!
+}
+
 type User {
   uuid: ID!
-  transactions: [Transaction!]!
+  transactions(after: String, first: Float): TransactionConnection
 }
 
 type Query {

@@ -14,4 +14,13 @@ export class User {
 
   @Column()
   name!: string;
+
+  @Column()
+  firstName!: string;
+
+  @Column()
+  lastName!: string;
+
+  @Column()
+  username!: string;
 }

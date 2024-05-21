@@ -3,22 +3,28 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@shopify/flash-list": "1.6.3",
-    "@testing-library/jest-native": "*",
-    "@testing-library/react-native": "*",
+    "@coinbase/wallet-sdk": "^4.0.0-rc.1",
+    "@shopify/flash-list": "1.6.4",
     "expo": "*",
-    "expo-dev-client": "~3.3.11",
+    "expo-asset": "~10.0.6",
+    "expo-dev-client": "~4.0.14",
+    "expo-linear-gradient": "~13.0.2",
+    "expo-status-bar": "~1.12.1",
     "metro-config": "*",
     "react": "18.2.0",
-    "react-native": "0.73.6",
-    "react-native-pager-view": "6.2.3",
-    "react-native-svg": "14.1.0",
+    "react-native": "0.74.1",
+    "react-native-pager-view": "6.3.0",
+    "react-native-svg": "15.2.0",
     "react-native-web": "*"
   },
   "scripts": {
     "eas-build-pre-install": "cd ../../ && node tools/scripts/eas-build-pre-install.mjs . apps/prowl-mobile && cp package-lock.json apps/prowl-mobile",
     "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/prowl-mobile",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "start": "expo start --dev-client"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
   }
 }

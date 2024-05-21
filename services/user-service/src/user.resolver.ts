@@ -13,6 +13,7 @@ import { User, PlaidAccount } from '@prowl/api-interfaces';
 import { GetToken, encrypt } from '@prowl/common';
 import { UserGRPCService } from './gRPC/user-gRPC.service';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { first } from 'rxjs';
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -27,20 +28,29 @@ export class UserResolver {
     return response;
   }
 
-  @Query((returns) => [User])
-  async getAllUsers(): Promise<User[]> {
-    return this.userService.findAll();
-  }
-
   @Query((returns) => [PlaidAccount])
   async getUserAccountsInfo(@GetToken('auth0ID') auth0ID): Promise<any> {
     return this.userService.getUserAccountInfo(auth0ID);
   }
 
   @Mutation((returns) => User)
-  async createUser(@GetToken() token): Promise<User> {
-    const { email, name, auth0ID } = token;
-    return this.userService.create(auth0ID, email, name);
+  async createUser(
+    @GetToken() token,
+    @Args('username') username: string,
+    @Args('email') email: string,
+    @Args('firstName') firstName: string,
+    @Args('lastName') lastName: string
+  ): Promise<User> {
+    const { auth0ID } = token;
+    const name = `${firstName} ${lastName}`;
+    return this.userService.create(
+      auth0ID,
+      email,
+      name,
+      firstName,
+      lastName,
+      username
+    );
   }
 
   @Mutation((returns) => User)

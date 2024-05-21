@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
   ScrollView,
@@ -9,10 +10,19 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useAuth0 } from 'react-native-auth0';
+import Auth0 from 'react-native-auth0';
+import { useAuth } from '../../contexts/AuthContext';
+
+const auth0 = new Auth0({
+  domain: 'dev-yuycjzgs1yedljuh.us.auth0.com',
+  clientId: 'BsaGs1glUYh2hklReySgL4VGvgivj4Ug',
+});
 
 export const SettingsScreen = () => {
+  const navigation = useNavigation();
   const [username, setUsername] = useState('john_doe');
   const [password, setPassword] = useState('');
+  const { setIsAuthenticated } = useAuth();
 
   // Dummy function to handle profile picture change
   const changeProfilePicture = () => {
@@ -27,7 +37,10 @@ export const SettingsScreen = () => {
   const { clearSession, user } = useAuth0();
 
   const logout = async () => {
+    auth0.credentialsManager.clearCredentials();
+
     await clearSession();
+    setIsAuthenticated(false);
   };
 
   return (
@@ -58,6 +71,10 @@ export const SettingsScreen = () => {
       </View>
 
       <View style={styles.section}>
+        <Button
+          title="Link Bank Account"
+          onPress={() => navigation.navigate('PlaidLinkScreen')}
+        />
         <Button title="Logout" onPress={logout} />
       </View>
     </ScrollView>

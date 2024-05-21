@@ -1,6 +1,6 @@
 // lib/api-interfaces/src/graphql/user.extension.ts
 import { ObjectType, Field, ID, Directive } from '@nestjs/graphql';
-import { Transaction } from '@prowl/api-interfaces'; // Ensure correct import
+import { TransactionConnection } from '@prowl/api-interfaces'; // Ensure correct import
 
 @ObjectType()
 @Directive('@extends')
@@ -8,8 +8,8 @@ import { Transaction } from '@prowl/api-interfaces'; // Ensure correct import
 export class User {
   @Field(() => ID)
   @Directive('@external')
-  uuid!: string; // Ensure this is only marked external and used to fetch transactions
+  uuid!: string;
 
-  @Field((type) => [Transaction])
-  transactions?: Transaction[];
+  @Field(() => TransactionConnection, { nullable: true }) // Use TransactionConnection for pagination
+  transactions?: TransactionConnection;
 }

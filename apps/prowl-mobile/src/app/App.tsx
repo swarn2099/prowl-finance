@@ -3,10 +3,9 @@ import { ApolloProvider } from '@apollo/client';
 import { useColorScheme } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { MyThemes } from './contexts/Themes/theme';
-import { ThemeProvider } from './contexts/Themes/ThemeContext';
-import NavigationComponent from './utils/Navigation';
-import { useAuth } from './contexts/AuthContext'; // Make sure this path is correct
+import { AppNavigator, AuthNavigator } from './utils/Navigation';
 import { createApolloClient } from './utils/api/apolloSetup'; // We will create this function
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 export const App = () => {
   const client = createApolloClient(); // Pass accessToken to a function that creates Apollo Client
@@ -14,12 +13,22 @@ export const App = () => {
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? MyThemes.dark : MyThemes.light;
 
-  return (
-    <ApolloProvider client={client}>
+  const AuthNavigation = () => {
+    const { isAuthenticated } = useAuth();
+
+    return (
       <NavigationContainer theme={theme}>
-        <NavigationComponent />
+        {isAuthenticated ? <AppNavigator /> : <AuthNavigator />}
       </NavigationContainer>
-    </ApolloProvider>
+    );
+  };
+
+  return (
+    <AuthProvider>
+      <ApolloProvider client={client}>
+        <AuthNavigation />
+      </ApolloProvider>
+    </AuthProvider>
   );
 };
 

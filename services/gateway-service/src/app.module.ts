@@ -19,6 +19,7 @@ import { authContext } from './auth/auth.context';
           subgraphs: [
             { name: 'users', url: 'http://localhost:8000/graphql' },
             { name: 'transactions', url: 'http://localhost:8001/graphql' },
+            { name: 'coinbase', url: 'http://localhost:8002/graphql' },
           ],
         }),
         buildService({ url }) {
